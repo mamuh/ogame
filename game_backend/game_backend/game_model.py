@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Dict
 from enum import Enum
 
@@ -8,7 +8,7 @@ from dataclasses_jsonschema import JsonSchemaMixin
 
 
 class Resources(Enum):
-    Metal = 0
+    Metal = "metal"
 
 
 @dataclass
@@ -54,6 +54,7 @@ class Planet(JsonSchemaMixin):
     name: str
     size: int
     buildings: List[Building]
+    owner_id: str
 
 
 @dataclass
@@ -65,9 +66,15 @@ class World(JsonSchemaMixin):
 class Player(JsonSchemaMixin):
     id: str
     name: str
+    resources: Dict[Resources, float] = field(
+        default_factory=lambda: {resource: 0 for resource in Resources}
+    )
 
 
 @dataclass
 class GameState(JsonSchemaMixin):
     world: World
     players: Dict[str, Player]
+
+    def get_player_planets(player_id: str) -> List[Planet]:
+        return [planet for planet in world.planets if planet.owner_id == player_id]

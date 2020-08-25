@@ -30,6 +30,7 @@ def initialise_gamestate() -> GameState:
                             ),
                         )
                     ],
+                    owner_id="max",
                 )
             }
         ),
