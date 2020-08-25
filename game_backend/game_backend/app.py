@@ -8,4 +8,6 @@ app = Flask(__name__)
 def index():
     return "Hello World"
 
-
+@app.route("/get_state")
+def get_state():
+    pass
