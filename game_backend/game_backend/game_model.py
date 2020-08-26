@@ -6,46 +6,8 @@ from enum import Enum
 
 from dataclasses_jsonschema import JsonSchemaMixin
 
-
-class Resources(Enum):
-    Metal = "metal"
-
-
-@dataclass
-class Component(JsonSchemaMixin):
-    pass
-
-
-@dataclass
-class UpgradableComponent(Component, JsonSchemaMixin):
-    base_cost: float
-    upgrade_cost_factor: float
-
-
-@dataclass
-class ProducerComponent(Component, JsonSchemaMixin):
-    production_rate: Dict[Resources, float]
-
-
-@dataclass
-class Building(JsonSchemaMixin):
-    pass
-
-
-@dataclass
-class Mine(Building, JsonSchemaMixin):
-    producer_component: ProducerComponent
-    upgradable_component: UpgradableComponent
-
-
-@dataclass
-class Factory(Building, JsonSchemaMixin):
-    pass
-
-
-@dataclass
-class Cannon(Building, JsonSchemaMixin):
-    pass
+from game_backend.resources import Resources
+from game_backend.entity import Entity
 
 
 @dataclass
@@ -53,7 +15,7 @@ class Planet(JsonSchemaMixin):
     id: str
     name: str
     size: int
-    buildings: List[Building]
+    buildings: List[Entity]
     owner_id: str
 
 

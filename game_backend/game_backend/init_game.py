@@ -4,12 +4,15 @@ from game_backend.game_model import (
     GameState,
     World,
     Planet,
-    Mine,
-    ProducerComponent,
-    UpgradableComponent,
     Player,
-    Resources,
 )
+from game_backend.components import (
+    ProducerComponent,
+    BuildingComponent,
+)
+from game_backend.resources import Resources
+
+from game_backend.game_data import Mine, OilRig
 
 
 def initialise_gamestate() -> GameState:
@@ -20,16 +23,7 @@ def initialise_gamestate() -> GameState:
                     id="earth",
                     name="Earth",
                     size=16,
-                    buildings=[
-                        Mine(
-                            producer_component=ProducerComponent(
-                                production_rate={Resources.Metal: 1}
-                            ),
-                            upgradable_component=UpgradableComponent(
-                                base_cost=100, upgrade_cost_factor=1.1
-                            ),
-                        )
-                    ],
+                    buildings=[Mine(), OilRig(),],
                     owner_id="max",
                 )
             }
