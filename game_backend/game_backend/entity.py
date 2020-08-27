@@ -11,8 +11,13 @@ class Entity(JsonSchemaMixin):
     id: str = None
 
     def __post_init__(self):
+        from game_backend.components import Component
+
         self.id: str = self.id or str(uuid4())
         EntityCatalog.register(self)
+        for attr_name, attr_value in self.__dict__.items():
+            if isinstance(attr_value, Component):
+                attr_value.entity_id = self.id
 
 
 class EntityCatalog:

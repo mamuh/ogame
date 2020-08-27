@@ -29,3 +29,9 @@ class OilRig(Entity):
     building_component: BuildingComponent = BuildingComponent(
         base_cost=200, upgrade_cost_factor=1.2
     )
+
+
+@dataclass
+class Planet(Entity):
+    name: str = "Planet"
+    planet_component: PlanetComponent = None

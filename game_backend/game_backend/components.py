@@ -12,8 +12,9 @@ from game_backend.entity import EntityCatalog
 @dataclass
 class Component(JsonSchemaMixin):
     def __post_init__(self):
-        self.entity_id = ""
-        self.id: str = self.id or str(uuid4())
+        self.entity_id = self.entity_id if hasattr(self, "entity_id") else ""
+        self.id: str = str(uuid4())
+        ComponentCatalog.register(self)
 
     @property
     def entity(self):
@@ -32,9 +33,20 @@ class ProducerComponent(Component, JsonSchemaMixin):
     production_rate: Dict[Resources, float]
 
 
+@dataclass
+class PlanetComponent(Component, JsonSchemaMixine):
+    name: str
+    size: int
+    building_ids: List[str]
+    owner_id: str
+
+
 class ComponentCatalog:
     def __init__(self):
         self.components: Dict[str, Component] = {}
 
     def register(self, component: Component):
         self.components[component.id] = component
+
+
+ComponentCatalog = ComponentCatalog()
