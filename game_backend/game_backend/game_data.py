@@ -5,6 +5,7 @@ from game_backend.entity import Entity
 from game_backend.components import (
     ProducerComponent,
     BuildingComponent,
+    PlanetComponent,
 )
 from game_backend.resources import Resources
 

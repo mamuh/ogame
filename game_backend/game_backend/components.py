@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from uuid import uuid4
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 
 from dataclasses_jsonschema import JsonSchemaMixin
 
@@ -34,7 +34,7 @@ class ProducerComponent(Component, JsonSchemaMixin):
 
 
 @dataclass
-class PlanetComponent(Component, JsonSchemaMixine):
+class PlanetComponent(Component, JsonSchemaMixin):
     name: str
     size: int
     building_ids: List[str]
