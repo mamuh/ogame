@@ -39,3 +39,19 @@ def test_ecs():
     assert my_composite_entity._parent_id is None
     assert my_composite_entity.simple_entities[0].parent == my_composite_entity
     assert my_composite_entity.simple_entities[1].parent == my_composite_entity
+
+    print("testing serialisation")
+
+    serialised = my_composite_entity.serialise()
+    assert "_parent_id" in serialised
+    assert serialised["_parent_id"] is None
+
+    assert "id" in serialised
+    assert serialised["id"] is not None
+
+    assert "components" in serialised
+    assert serialised["components"] == {}
+
+    assert "simple_entities" in serialised
+    assert serialised["simple_entities"][0]["_parent_id"] == serialised["id"]
+    assert serialised["simple_entities"][0]["components"]["HealthComponent"]["hp"] == 10

@@ -46,10 +46,40 @@ class Entity(ABC):
         self.components[component_type] = component
         return self
 
-    def serialise(self) -> str:
-        pass
+    def serialise(self) -> Dict:
+        components_dict = {}
+        for component_type, component in self.components.items():
+            components_dict[component_type.__name__] = component.to_dict()
+        entity_children = {}
+        other_attributes = {}
+        for attr_name, attr in self.__dict__.items():
+            if isinstance(attr, Entity):
+                entity_children[attr_name] = attr.serialise()
+            elif isinstance(attr, list):
+                entity_list = []
+                for element in attr:
+                    if isinstance(element, Entity):
+                        entity_list.append(element.serialise())
+                entity_children[attr_name] = entity_list
+            elif isinstance(attr, set):
+                entity_set = set()
+                for element in attr:
+                    if isinstance(element, Entity):
+                        entity_set.add(element.serialise())
+                entity_children[attr_name] = entity_set
+            elif isinstance(attr, dict):
+                if attr_name == "components":
+                    continue
+                entity_dict = {}
+                for k, element in attr.items():
+                    if isinstance(element, Entity):
+                        entity_dict[k] = element.serialise()
+                entity_children[attr_name] = entity_dict
+            else:
+                other_attributes[attr_name] = attr
+        return dict(components=components_dict, **entity_children, **other_attributes)
 
-    def deserialise(self, entity_string: str):
+    def deserialise(self, entity_dict: Dict):
         pass
 
 
