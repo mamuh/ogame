@@ -3,7 +3,14 @@ from game_backend.init_game import initialise_gamestate
 from game_backend.game import Game
 from game_backend.resources import Resources
 from game_backend.game_model import GameState
-from game_backend.entity import EntityCatalog
+from game_backend.ecs.entity import EntityCatalog
+from game_backend.components import (
+    PlayerComponent,
+    ProducerComponent,
+    PlanetComponent,
+    BuildingComponent,
+)
+import game_backend.entities
 
 
 def test_version():
@@ -15,21 +22,21 @@ def test_initialise_gamestate():
 
     assert len(game_state.players) == 1
     assert "max" in game_state.players
-    assert game_state.players["max"].name == "Max"
+    assert game_state.players["max"].components[PlayerComponent].name == "Max"
 
     assert "earth" in game_state.world.planets
     earth = game_state.world.planets["earth"]
 
-    assert earth.name == "Earth"
+    assert earth.components[PlanetComponent].name == "Earth"
 
     mine = earth.buildings[0]
-    assert mine.name == "Mine"
+    assert mine.components[BuildingComponent].name == "Mine"
 
 
 def test_serialise_gamestate():
     game_state = initialise_gamestate()
 
-    game_state_json = game_state.to_json()
+    game_state_dict = game_state.serialise()
 
     # Deserialisation does not work right now...
 
@@ -44,8 +51,8 @@ def test_ids():
 
     mine = game_state.world.planets["earth"].buildings[0]
 
-    assert mine.producer_component.entity_id == mine.id
-    assert mine.id in EntityCatalog.entities
+    assert mine.components[ProducerComponent]._entity_id == mine.id
+    assert mine.id in EntityCatalog.entities_index
 
 
 def test_game_update():
@@ -54,4 +61,9 @@ def test_game_update():
 
     game.update(10)
 
-    assert game.game_state.players["max"].resources[Resources.Metal] == 10
+    assert (
+        game.game_state.players["max"]
+        .components[PlayerComponent]
+        .resources[Resources.Metal]
+        == 10
+    )

@@ -14,7 +14,7 @@ class Entity(ABC):
 
     def __post_init__(self):
         if self.id is None:
-            self.id = uuid4()
+            self.id = str(uuid4())
         for component_type, component in self.components.items():
             component._entity_id = self.id
         # We set the parent id of all children

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 
 from flask import Flask
 
@@ -16,7 +17,7 @@ def index():
 
 @app.route("/get_state")
 def get_state():
-    return game_state.to_json()
+    return json.dumps(game_state.serialise())
 
 
 if __name__ == "__main__":

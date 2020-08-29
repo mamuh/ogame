@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from game_backend.game_model import (
+from game_backend.entities import (
     GameState,
     World,
     Planet,
@@ -19,16 +19,11 @@ def initialise_gamestate() -> GameState:
     game_state = GameState(
         world=World(
             planets={
-                "earth": Planet(
-                    id="earth",
-                    name="Earth",
-                    size=16,
-                    buildings=[Mine(), OilRig(),],
-                    owner_id="max",
+                "earth": Planet.new(
+                    name="Earth", size=16, owner_id="max", buildings=[Mine(), OilRig()]
                 )
             }
         ),
-        players={"max": Player(id="max", name="Max")},
+        players={"max": Player.new(id="max", name="Max")},
     )
-
     return game_state
