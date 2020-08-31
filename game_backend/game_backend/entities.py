@@ -65,3 +65,7 @@ class Player(Entity):
 class GameState(Entity):
     world: World = field(default_factory=World)
     players: Dict[str, Player] = field(default_factory=dict)
+
+    @property
+    def catalog_key(self):
+        return "game_state"

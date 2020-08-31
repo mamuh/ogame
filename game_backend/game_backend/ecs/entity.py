@@ -5,6 +5,7 @@ from typing import Dict
 
 from game_backend.ecs.component import Component
 
+
 # TODO: garbage collection
 @dataclass
 class Entity(ABC):
@@ -36,6 +37,10 @@ class Entity(ABC):
         if self._parent_id is None:
             return
         return EntityCatalog.entities_index[self._parent_id]
+
+    @property
+    def catalog_key(self):
+        return
 
     def add_component(self, component: Component) -> "Entity":
         component_type = type(component)
@@ -86,9 +91,15 @@ class Entity(ABC):
 class EntityCatalog:
     def __init__(self):
         self.entities_index = {}
+        self.special_index = {}
+
+    def get_special(self, key: str):
+        return self.special_index.get(key)
 
     def register(self, entity: Entity):
         self.entities_index[entity.id] = entity
+        if entity.catalog_key is not None:
+            self.special_index[entity.catalog_key] = entity
 
 
 EntityCatalog = EntityCatalog()

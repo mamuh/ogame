@@ -4,6 +4,7 @@ import time
 
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
+from game_backend.systems.production_system import ProductionSystem
 
 
 @dataclass
@@ -23,18 +24,7 @@ class Game(Thread):
 
     def update(self, dt):
         # Production round
-        for planet_id, planet in self.game_state.world.planets.items():
-            planet_comp = planet.components[PlanetComponent]
-            planet_owner = self.game_state.players[planet_comp.owner_id]
-            owner_comp = planet_owner.components[PlayerComponent]
-            for building in planet.buildings:
-                # TODO: There should be a production system.
-                # Producer components get registered in this system
-                # and the system updated updates these components
-                if ProducerComponent in building.components:
-                    producer_component = building.components[ProducerComponent]
-                    for resource, rate in producer_component.production_rate.items():
-                        owner_comp.resources[resource] += rate * dt
+        ProductionSystem.update(dt)
 
     def run(self):
         last_update = time.time()
