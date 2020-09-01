@@ -20,6 +20,11 @@ def get_state():
     return json.dumps(game_state.serialise())
 
 
+@app.route("/new_player/<name>", methods=["POST"])
+def new_player(name: str):
+    return str(game_thread.create_new_player(name, name))
+
+
 @app.route("/actions/upgrade_building/<planet_id>/<building_slot>", methods=["POST"])
 def upgrade_building(planet_id: str, building_slot: int):
     return str(game_thread.action_upgrade_building(planet_id, int(building_slot)))

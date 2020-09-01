@@ -5,6 +5,7 @@ import time
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
 from game_backend.systems.production_system import ProductionSystem
+from game_backend.entities import Player
 
 
 @dataclass
@@ -35,6 +36,22 @@ class Game(Thread):
             .components[PlanetComponent]
             .upgrade_building(building_slot)
         )
+
+    def create_new_player(self, player_id: str, player_name: str) -> bool:
+        if player_id in self.game_state.players:
+            # Name is already taken...
+            return False
+        empty_planets = [
+            planet.components[PlanetComponent]
+            for planet in self.game_state.world.planets.values()
+            if planet.components[PlanetComponent].owner_id is None
+        ]
+        if len(empty_planets) == 0:
+            # No more space for a new player...
+            return False
+        self.game_state.players[player_id] = Player.new(id=player_id, name=player_name)
+        empty_planets[0].owner_id = player_id
+        return True
 
     def run(self):
         last_update = time.time()

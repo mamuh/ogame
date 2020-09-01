@@ -1,7 +1,7 @@
 import json
 
 from game_backend import __version__
-from game_backend.init_game import initialise_gamestate
+from game_backend.init_game import initialise_gamestate, initialise_empty_universe
 from game_backend.game import Game
 from game_backend.resources import Resources
 from game_backend.entities import GameState
@@ -103,3 +103,28 @@ def test_upgrade_building():
     assert upgrade_success
     assert planet_component.resources[Resources.Metal] == 100
     assert planet_component.resources[Resources.Oil] == 1.1
+
+
+def test_empty_universe():
+    game_state = initialise_empty_universe(100)
+
+    assert len(game_state.world.planets) == 100
+
+
+def test_create_new_player():
+    game_state = initialise_empty_universe(100)
+
+    game = Game(game_state)
+
+    success = game.create_new_player("john", "John")
+
+    assert success
+
+    assert (
+        game_state.world.planets["planet_0"].components[PlanetComponent].owner_id
+        == "john"
+    )
+
+    success = game.create_new_player("john", "Michel")
+
+    assert not success
