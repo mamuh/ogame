@@ -17,15 +17,15 @@ class BuildingComponent(Component, JsonSchemaMixin):
     level: int = 0
 
     @property
-    def upgrade_cost(self):
+    def upgrade_cost(self) -> Dict[str, float]:
         return {
-            resource: resource_base_cost * self.upgrade_cost_factor ** self.level
+            resource.value: resource_base_cost * self.upgrade_cost_factor ** self.level
             for resource, resource_base_cost in self.base_cost.items()
         }
 
     def can_upgrade(self, resources: Dict[Resources, float]) -> bool:
-        for resource, cost in self.upgrade_cost.items():
-            if cost > resources[resource]:
+        for resource_str, cost in self.upgrade_cost.items():
+            if cost > resources[Resources(resource_str)]:
                 return False
         return True
 
@@ -66,15 +66,15 @@ class PlanetComponent(Component, JsonSchemaMixin):
         return min(1, energy_production / energy_consumption)
 
     @property
-    def production_per_second(self) -> Dict[Resources, float]:
-        produced_resources = {res: 0 for res in Resources}
+    def production_per_second(self) -> Dict[str, float]:
+        produced_resources = {res.value: 0 for res in Resources}
         planet = self.entity
         for building in planet.buildings:
             if ProducerComponent in building.components:
                 prod_comp = building.components[ProducerComponent]
                 building_comp = building.components[BuildingComponent]
                 for resource, rate in prod_comp.production_rate.items():
-                    produced_resources[resource] += (
+                    produced_resources[resource.value] += (
                         rate
                         * self.energy_ratio
                         * building_comp.upgrade_prod_factor ** building_comp.level
@@ -94,8 +94,8 @@ class PlanetComponent(Component, JsonSchemaMixin):
         if not building_comp.can_upgrade(self.resources):
             return False
 
-        for resource, cost in building_comp.upgrade_cost.items():
-            self.resources[resource] -= cost
+        for resource_str, cost in building_comp.upgrade_cost.items():
+            self.resources[Resources(resource_str)] -= cost
 
         building_comp.level += 1
 

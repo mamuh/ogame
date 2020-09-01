@@ -18,7 +18,7 @@ def Mine() -> Building:
             ),
             BuildingComponent: BuildingComponent(
                 name="Mine",
-                base_cost={Resources.Metal: 100},
+                base_cost={Resources.Metal: 10},
                 upgrade_cost_factor=1.1,
                 upgrade_prod_factor=1.1,
             ),
@@ -34,7 +34,7 @@ def OilRig() -> Building:
             ),
             BuildingComponent: BuildingComponent(
                 name="OilRig",
-                base_cost={Resources.Metal: 200},
+                base_cost={Resources.Metal: 20},
                 upgrade_cost_factor=1.2,
                 upgrade_prod_factor=1.1,
             ),
@@ -50,7 +50,7 @@ def SolarPlant() -> Building:
             ),
             BuildingComponent: BuildingComponent(
                 name="SolarPlant",
-                base_cost={Resources.Metal: 100},
+                base_cost={Resources.Metal: 10},
                 upgrade_cost_factor=1.1,
                 upgrade_prod_factor=1.1,
             ),

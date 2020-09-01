@@ -1,3 +1,5 @@
+import json
+
 from game_backend import __version__
 from game_backend.init_game import initialise_gamestate
 from game_backend.game import Game
@@ -37,6 +39,8 @@ def test_serialise_gamestate():
     game_state = initialise_gamestate()
 
     game_state_dict = game_state.serialise()
+
+    game_state_string = json.dumps(game_state_dict)
 
     # Deserialisation does not work right now...
 
@@ -97,5 +101,5 @@ def test_upgrade_building():
     upgrade_success = planet_component.upgrade_building(0)
 
     assert upgrade_success
-    assert planet_component.resources[Resources.Metal] == 10
+    assert planet_component.resources[Resources.Metal] == 100
     assert planet_component.resources[Resources.Oil] == 1.1

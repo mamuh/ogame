@@ -54,7 +54,7 @@ class Entity(ABC):
     def serialise(self) -> Dict:
         components_dict = {}
         for component_type, component in self.components.items():
-            components_dict[component_type.__name__] = component.to_dict()
+            components_dict[component_type.__name__] = component.serialise()
         entity_children = {}
         other_attributes = {}
         for attr_name, attr in self.__dict__.items():

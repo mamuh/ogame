@@ -2,6 +2,7 @@ from typing import Dict
 
 from game_backend.ecs.entity import EntityCatalog
 from game_backend.entities import GameState
+from game_backend.resources import Resources
 from game_backend.components import (
     ProducerComponent,
     PlanetComponent,
@@ -20,8 +21,10 @@ class ProductionSystem:
             planet_comp = planet.components[PlanetComponent]
             production_per_second = planet_comp.production_per_second
 
-            for resource, resource_prod_per_sec in production_per_second.items():
-                planet_comp.resources[resource] += resource_prod_per_sec * dt
+            for resource_str, resource_prod_per_sec in production_per_second.items():
+                planet_comp.resources[Resources(resource_str)] += (
+                    resource_prod_per_sec * dt
+                )
 
 
 ProductionSystem = ProductionSystem()
