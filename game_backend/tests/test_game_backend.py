@@ -43,7 +43,7 @@ def test_serialise_gamestate():
 
 #    new_game_state = GameState.from_json(game_state_json)
 
-#   assert new_game_state == game_state
+# assert new_game_state == game_state
 
 
 def test_ids():
