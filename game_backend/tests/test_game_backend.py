@@ -62,8 +62,21 @@ def test_game_update():
     game.update(10)
 
     assert (
-        game.game_state.players["max"]
-        .components[PlayerComponent]
+        game.game_state.world.planets["earth"]
+        .components[PlanetComponent]
         .resources[Resources.Metal]
         == 10
+    )
+
+    game_state.world.planets["earth"].buildings[0].components[
+        BuildingComponent
+    ].level += 1
+
+    game.update(10)
+
+    assert (
+        game.game_state.world.planets["earth"]
+        .components[PlanetComponent]
+        .resources[Resources.Metal]
+        == 21
     )

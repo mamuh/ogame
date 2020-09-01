@@ -12,7 +12,7 @@ from game_backend.components import (
 )
 from game_backend.resources import Resources
 
-from game_backend.game_data import Mine, OilRig
+from game_backend.game_data import Mine, OilRig, SolarPlant
 
 
 def initialise_gamestate() -> GameState:
@@ -20,7 +20,10 @@ def initialise_gamestate() -> GameState:
         world=World(
             planets={
                 "earth": Planet.new(
-                    name="Earth", size=16, owner_id="max", buildings=[Mine(), OilRig()]
+                    name="Earth",
+                    size=16,
+                    owner_id="max",
+                    buildings=[Mine(), OilRig(), SolarPlant()],
                 )
             }
         ),

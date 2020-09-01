@@ -13,9 +13,14 @@ from game_backend.resources import Resources
 def Mine() -> Building:
     return Building(
         components={
-            ProducerComponent: ProducerComponent(production_rate={Resources.Metal: 1}),
+            ProducerComponent: ProducerComponent(
+                production_rate={Resources.Metal: 1}, energy_consumption=5
+            ),
             BuildingComponent: BuildingComponent(
-                name="Mine", base_cost=100, upgrade_cost_factor=1.1
+                name="Mine",
+                base_cost={Resources.Metal: 100},
+                upgrade_cost_factor=1.1,
+                upgrade_prod_factor=1.1,
             ),
         }
     )
@@ -24,9 +29,30 @@ def Mine() -> Building:
 def OilRig() -> Building:
     return Building(
         components={
-            ProducerComponent: ProducerComponent(production_rate={Resources.Oil: 0.01}),
+            ProducerComponent: ProducerComponent(
+                production_rate={Resources.Oil: 0.01}, energy_consumption=6
+            ),
             BuildingComponent: BuildingComponent(
-                name="OilRig", base_cost=200, upgrade_cost_factor=1.2
+                name="OilRig",
+                base_cost={Resources.Metal: 200},
+                upgrade_cost_factor=1.2,
+                upgrade_prod_factor=1.1,
+            ),
+        }
+    )
+
+
+def SolarPlant() -> Building:
+    return Building(
+        components={
+            ProducerComponent: ProducerComponent(
+                production_rate={}, energy_consumption=0, energy_production=15
+            ),
+            BuildingComponent: BuildingComponent(
+                name="SolarPlant",
+                base_cost={Resources.Metal: 100},
+                upgrade_cost_factor=1.1,
+                upgrade_prod_factor=1.1,
             ),
         }
     )
