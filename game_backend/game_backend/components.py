@@ -23,6 +23,12 @@ class BuildingComponent(Component, JsonSchemaMixin):
             for resource, resource_base_cost in self.base_cost.items()
         }
 
+    def can_upgrade(self, resources: Dict[Resources, float]) -> bool:
+        for resource, cost in self.upgrade_cost.items():
+            if cost > resources[resource]:
+                return False
+        return True
+
 
 @dataclass
 class ProducerComponent(Component, JsonSchemaMixin):
@@ -41,7 +47,7 @@ class PlanetComponent(Component, JsonSchemaMixin):
     )
 
     @property
-    def energy_ratio(self):
+    def energy_ratio(self) -> float:
         energy_production = 0
         energy_consumption = 0
         planet = self.entity
@@ -60,7 +66,7 @@ class PlanetComponent(Component, JsonSchemaMixin):
         return min(1, energy_production / energy_consumption)
 
     @property
-    def production_per_second(self):
+    def production_per_second(self) -> Dict[Resources, float]:
         produced_resources = {res: 0 for res in Resources}
         planet = self.entity
         for building in planet.buildings:
@@ -74,6 +80,26 @@ class PlanetComponent(Component, JsonSchemaMixin):
                         * building_comp.upgrade_prod_factor ** building_comp.level
                     )
         return produced_resources
+
+    def upgrade_building(self, slot: int) -> bool:
+        """
+        Returns a boolean indicating upgrade success or failure
+        """
+        planet = self.entity
+        assert slot < len(
+            planet.buildings
+        ), f"Invalid slot number for this planet: {slot}"
+        building_comp = self.entity.buildings[slot].components[BuildingComponent]
+
+        if not building_comp.can_upgrade(self.resources):
+            return False
+
+        for resource, cost in building_comp.upgrade_cost.items():
+            self.resources[resource] -= cost
+
+        building_comp.level += 1
+
+        return True
 
 
 @dataclass

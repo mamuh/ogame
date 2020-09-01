@@ -80,3 +80,22 @@ def test_game_update():
         .resources[Resources.Metal]
         == 21
     )
+
+
+def test_upgrade_building():
+    game_state = initialise_gamestate()
+
+    planet_component = game_state.world.planets["earth"].components[PlanetComponent]
+    upgrade_success = planet_component.upgrade_building(0)
+
+    assert not upgrade_success
+
+    game = Game(game_state)
+
+    game.update(110)
+
+    upgrade_success = planet_component.upgrade_building(0)
+
+    assert upgrade_success
+    assert planet_component.resources[Resources.Metal] == 10
+    assert planet_component.resources[Resources.Oil] == 1.1

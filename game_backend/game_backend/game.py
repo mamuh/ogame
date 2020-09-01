@@ -26,6 +26,16 @@ class Game(Thread):
         # Production round
         ProductionSystem.update(dt)
 
+    def action_upgrade_building(self, planet_id: str, building_slot: int) -> bool:
+        assert (
+            planet_id in self.game_state.world.planets
+        ), f"Unknown planet id {planet_id}"
+        return (
+            self.game_state.world.planets[planet_id]
+            .components[PlanetComponent]
+            .upgrade_building(building_slot)
+        )
+
     def run(self):
         last_update = time.time()
         game_step = 0
