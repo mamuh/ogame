@@ -1,4 +1,5 @@
 import json
+import pytest
 
 from game_backend import __version__
 from game_backend.init_game import initialise_gamestate, initialise_empty_universe
@@ -88,21 +89,31 @@ def test_game_update():
 
 def test_upgrade_building():
     game_state = initialise_gamestate()
+    game = Game(game_state)
 
-    planet_component = game_state.world.planets["earth"].components[PlanetComponent]
-    upgrade_success = planet_component.upgrade_building("mine")
+    upgrade_success = game.action_upgrade_building("max", "earth", "mine")
 
     assert not upgrade_success
 
-    game = Game(game_state)
-
     game.update(110)
 
-    upgrade_success = planet_component.upgrade_building("mine")
+    upgrade_success = game.action_upgrade_building("max", "earth", "mine")
+
+    planet_component = game_state.world.planets["earth"].components[PlanetComponent]
 
     assert upgrade_success
     assert planet_component.resources[Resources.Metal] == 100
     assert planet_component.resources[Resources.Oil] == 1.1
+
+    with pytest.raises(AssertionError) as excinfo:
+        game.action_upgrade_building("max", "ploup", "mine")
+
+        assert "unkwnown planet" in str(excinfo.value).lower()
+
+    with pytest.raises(AssertionError) as excinfo:
+        game.action_upgrade_building("ploup", "earth", "mine")
+
+        assert "unknown player" in str(excinfo.value).lower()
 
 
 def test_empty_universe():

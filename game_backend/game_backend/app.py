@@ -25,9 +25,12 @@ def new_player(name: str):
     return str(game_thread.create_new_player(name, name))
 
 
-@app.route("/actions/upgrade_building/<planet_id>/<building_id>", methods=["POST"])
-def upgrade_building(planet_id: str, building_id: str):
-    return str(game_thread.action_upgrade_building(planet_id, building_id))
+@app.route(
+    "/player/<player_id>/actions/upgrade_building/<planet_id>/<building_id>",
+    methods=["POST"],
+)
+def upgrade_building(player_id: str, planet_id: str, building_id: str):
+    return str(game_thread.action_upgrade_building(player_id, planet_id, building_id))
 
 
 if __name__ == "__main__":

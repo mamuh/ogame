@@ -27,10 +27,19 @@ class Game(Thread):
         # Production round
         ProductionSystem.update(dt)
 
-    def action_upgrade_building(self, planet_id: str, building_id: str) -> bool:
+    def action_upgrade_building(
+        self, player_id: str, planet_id: str, building_id: str
+    ) -> bool:
+        assert player_id in self.game_state.players, f"Unknown player id {player_id}"
         assert (
             planet_id in self.game_state.world.planets
         ), f"Unknown planet id {planet_id}"
+        assert (
+            self.game_state.world.planets[planet_id]
+            .components[PlanetComponent]
+            .owner_id
+            == player_id
+        ), f"Player {player_id} does not own planet {planet_id}"
         return (
             self.game_state.world.planets[planet_id]
             .components[PlanetComponent]
