@@ -1,7 +1,7 @@
 from typing import Dict
 
 from game_backend.ecs.entity import EntityCatalog
-from game_backend.entities import GameState
+from game_backend.entities.entities import GameState
 from game_backend.resources import Resources
 from game_backend.components import (
     ProducerComponent,

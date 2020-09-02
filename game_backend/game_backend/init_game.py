@@ -1,20 +1,12 @@
 #!/usr/bin/env python3
 import random
 
-from game_backend.entities import (
+from game_backend.entities.entities import (
     GameState,
     World,
     Planet,
     Player,
-    Mine,
-    OilRig,
-    SolarPlant,
 )
-from game_backend.components import (
-    ProducerComponent,
-    BuildingComponent,
-)
-from game_backend.resources import Resources
 
 
 def initialise_gamestate() -> GameState:

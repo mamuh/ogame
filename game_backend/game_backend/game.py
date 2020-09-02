@@ -5,7 +5,7 @@ import time
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
 from game_backend.systems.production_system import ProductionSystem
-from game_backend.entities import Player
+from game_backend.entities.entities import Player
 
 
 @dataclass
