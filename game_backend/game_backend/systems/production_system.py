@@ -20,8 +20,14 @@ class ProductionSystem:
         for planet_id, planet in game_state.world.planets.items():
             planet_comp = planet.components[PlanetComponent]
             production_per_second = planet_comp.production_per_second
+            planet_storage = planet_comp.resources_storage
 
             for resource_str, resource_prod_per_sec in production_per_second.items():
+                if planet_comp.resources[Resources(resource_str)] >= max(
+                    planet_storage[resource_str], planet_comp.base_storage
+                ):
+                    # The planet is at or above capacity for this resource, it stops accumulating
+                    continue
                 planet_comp.resources[Resources(resource_str)] += (
                     resource_prod_per_sec * dt
                 )

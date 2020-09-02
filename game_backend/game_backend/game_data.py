@@ -56,3 +56,18 @@ def SolarPlant() -> Building:
             ),
         }
     )
+
+
+def MetalHangar() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="MetalHangar",
+                base_cost={Resources.Metal: 5},
+                upgrade_cost_factor=1.2,
+            ),
+            StorageComponent: StorageComponent(
+                resources_storage={Resources.Metal: 1000}
+            ),
+        }
+    )
