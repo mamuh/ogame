@@ -8,11 +8,13 @@ from game_backend.components import (
 )
 from game_backend.resources import Resources
 from game_backend.entities.buildings import Building, Buildings
+from game_backend.entities.ships import Ship
 
 
 @dataclass
 class Planet(Entity):
     buildings: Dict[str, Building] = field(default_factory=Buildings)
+    ships: List[Ship] = field(default_factory=list)
 
     @classmethod
     def new(

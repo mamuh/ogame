@@ -99,6 +99,18 @@ def OilTank() -> Building:
     )
 
 
+def ShipYard() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="ShipYard",
+                base_cost={Resources.Metal: 20},
+                upgrade_cost_factor=1.3,
+            )
+        }
+    )
+
+
 def Buildings() -> Dict[str, Building]:
     return {
         "mine": Mine(),
@@ -106,4 +118,5 @@ def Buildings() -> Dict[str, Building]:
         "solar_plant": SolarPlant(),
         "metal_hangar": MetalHangar(),
         "oil_tank": OilTank(),
+        "ship_yard": ShipYard(),
     }

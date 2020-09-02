@@ -31,6 +31,17 @@ class BuildingComponent(Component, JsonSchemaMixin):
 
 
 @dataclass
+class ShipComponent(Component, JsonSchemaMixin):
+    name: str
+    cost: Dict[Resources, float]
+    hp: float
+    shield: float
+    damage: float
+    speed: float
+    cargo: float
+
+
+@dataclass
 class ProducerComponent(Component, JsonSchemaMixin):
     production_rate: Dict[Resources, float]
     energy_consumption: int
