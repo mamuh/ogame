@@ -6,6 +6,9 @@ from game_backend.entities import (
     World,
     Planet,
     Player,
+    Mine,
+    OilRig,
+    SolarPlant,
 )
 from game_backend.components import (
     ProducerComponent,
@@ -13,20 +16,11 @@ from game_backend.components import (
 )
 from game_backend.resources import Resources
 
-from game_backend.game_data import Mine, OilRig, SolarPlant
-
 
 def initialise_gamestate() -> GameState:
     game_state = GameState(
         world=World(
-            planets={
-                "earth": Planet.new(
-                    name="Earth",
-                    size=16,
-                    owner_id="max",
-                    buildings=[Mine(), OilRig(), SolarPlant()],
-                )
-            }
+            planets={"earth": Planet.new(name="Earth", size=16, owner_id="max",)}
         ),
         players={"max": Player.new(id="max", name="Max")},
     )
@@ -38,10 +32,7 @@ def initialise_empty_universe(size: int) -> GameState:
         world=World(
             planets={
                 f"planet_{i}": Planet.new(
-                    name=f"Planet_{i}",
-                    size=random.randint(10, 20),
-                    owner_id=None,
-                    buildings=[],
+                    name=f"Planet_{i}", size=random.randint(10, 20), owner_id=None,
                 )
                 for i in range(size)
             }

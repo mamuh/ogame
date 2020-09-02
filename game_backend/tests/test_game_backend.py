@@ -31,7 +31,7 @@ def test_initialise_gamestate():
 
     assert earth.components[PlanetComponent].name == "Earth"
 
-    mine = earth.buildings[0]
+    mine = earth.buildings["mine"]
     assert mine.components[BuildingComponent].name == "Mine"
 
 
@@ -53,7 +53,7 @@ def test_serialise_gamestate():
 def test_ids():
     game_state = initialise_gamestate()
 
-    mine = game_state.world.planets["earth"].buildings[0]
+    mine = game_state.world.planets["earth"].buildings["mine"]
 
     assert mine.components[ProducerComponent]._entity_id == mine.id
     assert mine.id in EntityCatalog.entities_index
@@ -72,7 +72,7 @@ def test_game_update():
         == 10
     )
 
-    game_state.world.planets["earth"].buildings[0].components[
+    game_state.world.planets["earth"].buildings["mine"].components[
         BuildingComponent
     ].level += 1
 
@@ -90,7 +90,7 @@ def test_upgrade_building():
     game_state = initialise_gamestate()
 
     planet_component = game_state.world.planets["earth"].components[PlanetComponent]
-    upgrade_success = planet_component.upgrade_building(0)
+    upgrade_success = planet_component.upgrade_building("mine")
 
     assert not upgrade_success
 
@@ -98,7 +98,7 @@ def test_upgrade_building():
 
     game.update(110)
 
-    upgrade_success = planet_component.upgrade_building(0)
+    upgrade_success = planet_component.upgrade_building("mine")
 
     assert upgrade_success
     assert planet_component.resources[Resources.Metal] == 100

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, astuple
 from typing import Dict, List
 
 from dataclasses_jsonschema import JsonSchemaMixin
@@ -51,14 +51,13 @@ class PlanetComponent(Component, JsonSchemaMixin):
     resources: Dict[Resources, float] = field(
         default_factory=lambda: {resource: 0.0 for resource in Resources}
     )
-    base_storage: float = 100
 
     @property
     def energy_ratio(self) -> float:
         energy_production = 0
         energy_consumption = 0
         planet = self.entity
-        for building in planet.buildings:
+        for building in planet.buildings.values():
             if ProducerComponent in building.components:
                 prod_comp = building.components[ProducerComponent]
                 building_comp = building.components[BuildingComponent]
@@ -76,7 +75,7 @@ class PlanetComponent(Component, JsonSchemaMixin):
     def production_per_second(self) -> Dict[str, float]:
         produced_resources = {res.value: 0 for res in Resources}
         planet = self.entity
-        for building in planet.buildings:
+        for building in planet.buildings.values():
             if ProducerComponent in building.components:
                 prod_comp = building.components[ProducerComponent]
                 building_comp = building.components[BuildingComponent]
@@ -92,26 +91,28 @@ class PlanetComponent(Component, JsonSchemaMixin):
     def resources_storage(self) -> Dict[str, float]:
         resources_storage_dict = {res.value: 0 for res in Resources}
         planet = self.entity
-        for building in planet.buildings:
+        for building in planet.buildings.values():
             if StorageComponent in building.components:
                 stor_comp = building.components[StorageComponent]
                 building_comp = building.components[BuildingComponent]
                 for resource, storage in stor_comp.resources_storage.items():
-                    resources_storage_dict[resource] += (
+                    resources_storage_dict[resource.value] += (
                         storage
-                        * storage_comp.upgrade_storage_factor ** building_comp.level
+                        * stor_comp.upgrade_storage_factor ** building_comp.level
                     )
         return resources_storage_dict
 
-    def upgrade_building(self, slot: int) -> bool:
+    def upgrade_building(self, building_name: str) -> bool:
         """
         Returns a boolean indicating upgrade success or failure
         """
         planet = self.entity
-        assert slot < len(
-            planet.buildings
-        ), f"Invalid slot number for this planet: {slot}"
-        building_comp = self.entity.buildings[slot].components[BuildingComponent]
+        assert (
+            building_name in self.entity.buildings
+        ), f"Invalid building name: {building_name}"
+        building_comp = self.entity.buildings[building_name].components[
+            BuildingComponent
+        ]
 
         if not building_comp.can_upgrade(self.resources):
             return False
