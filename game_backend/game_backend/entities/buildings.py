@@ -7,6 +7,7 @@ from game_backend.components import (
     BuildingComponent,
     ProducerComponent,
     StorageComponent,
+    CombatComponent,
 )
 from game_backend.resources import Resources
 
@@ -47,7 +48,7 @@ def OilRig() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
-                production_rate={Resources.Oil: 0.01}, energy_consumption=6
+                production_rate={Resources.Oil: 0.5}, energy_consumption=6
             ),
             BuildingComponent: BuildingComponent(
                 name="OilRig",
@@ -106,7 +107,20 @@ def ShipYard() -> Building:
                 name="ShipYard",
                 base_cost={Resources.Metal: 20},
                 upgrade_cost_factor=1.3,
-            )
+            ),
+        }
+    )
+
+
+def MissileTurret() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="MissileTurret",
+                base_cost={Resources.Metal: 50},
+                upgrade_cost_factor=1.0,
+            ),
+            CombatComponent: CombatComponent(hp=100, shield=30, damage=30,),
         }
     )
 
@@ -119,4 +133,5 @@ def Buildings() -> Dict[str, Building]:
         "metal_hangar": MetalHangar(),
         "oil_tank": OilTank(),
         "ship_yard": ShipYard(),
+        "missile_turret": MissileTurret(),
     }

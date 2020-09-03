@@ -2,10 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict
 
 from game_backend.ecs.entity import Entity
-from game_backend.components import (
-    PlanetComponent,
-    PlayerComponent,
-)
+from game_backend.components import PlanetComponent, PlayerComponent
 from game_backend.resources import Resources
 from game_backend.entities.buildings import Building, Buildings
 from game_backend.entities.ships import Ship
@@ -36,6 +33,8 @@ class World(Entity):
 
 @dataclass
 class Player(Entity):
+    ships: List[Ship] = field(default_factory=list)
+
     @classmethod
     def new(cls, id: str, name: str):
         return cls(components={PlayerComponent: PlayerComponent(id=id, name=name)})

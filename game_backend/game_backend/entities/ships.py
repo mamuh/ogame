@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 from game_backend.ecs.entity import Entity
-from game_backend.components import ShipComponent
+from game_backend.components import ShipComponent, CombatComponent
 from game_backend.resources import Resources
 
 
@@ -17,12 +17,10 @@ def LightFighter() -> Ship:
             ShipComponent: ShipComponent(
                 name="LightFighter",
                 cost={Resources.Metal: 30, Resources.Oil: 10,},
-                hp=100,
-                shield=20,
-                damage=20,
                 speed=10,
                 cargo=100,
-            )
+            ),
+            CombatComponent: CombatComponent(hp=100, shield=20, damage=20),
         }
     )
 
@@ -33,11 +31,12 @@ def HeavyFighter() -> Ship:
             ShipComponent: ShipComponent(
                 name="HeavyFighter",
                 cost={Resources.Metal: 100, Resources.Oil: 30},
-                hp=250,
-                shield=40,
-                damage=50,
                 speed=10,
                 cargo=150,
-            )
+            ),
+            CombatComponent: CombatComponent(hp=250, shield=40, damage=50,),
         }
     )
+
+
+ships_index = {"light_fighter": LightFighter, "heavy_fighter": HeavyFighter}

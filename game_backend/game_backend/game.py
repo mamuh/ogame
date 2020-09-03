@@ -5,6 +5,7 @@ import time
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
 from game_backend.systems.production_system import ProductionSystem
+from game_backend.systems.ship_building_system import ShipBuildingSystem
 from game_backend.entities.entities import Player
 
 
@@ -27,9 +28,7 @@ class Game(Thread):
         # Production round
         ProductionSystem.update(dt)
 
-    def action_upgrade_building(
-        self, player_id: str, planet_id: str, building_id: str
-    ) -> bool:
+    def check_player_planet(self, player_id: str, planet_id: str):
         assert player_id in self.game_state.players, f"Unknown player id {player_id}"
         assert (
             planet_id in self.game_state.world.planets
@@ -40,11 +39,20 @@ class Game(Thread):
             .owner_id
             == player_id
         ), f"Player {player_id} does not own planet {planet_id}"
+
+    def action_upgrade_building(
+        self, player_id: str, planet_id: str, building_id: str
+    ) -> bool:
+        self.check_player_planet(player_id, planet_id)
         return (
             self.game_state.world.planets[planet_id]
             .components[PlanetComponent]
             .upgrade_building(building_id)
         )
+
+    def action_build_ship(self, player_id: str, planet_id: str, ship_id: str) -> bool:
+        self.check_player_planet(player_id, planet_id)
+        return ShipBuildingSystem.build_ship(player_id, planet_id, ship_id)
 
     def create_new_player(self, player_id: str, player_name: str) -> bool:
         if player_id in self.game_state.players:

@@ -12,6 +12,7 @@ from game_backend.components import (
     ProducerComponent,
     PlanetComponent,
     BuildingComponent,
+    ShipComponent,
 )
 import game_backend.entities
 
@@ -103,7 +104,7 @@ def test_upgrade_building():
 
     assert upgrade_success
     assert planet_component.resources[Resources.Metal] == 100
-    assert planet_component.resources[Resources.Oil] == 1.1
+    assert planet_component.resources[Resources.Oil] == 55
 
     with pytest.raises(AssertionError) as excinfo:
         game.action_upgrade_building("max", "ploup", "mine")
@@ -139,3 +140,29 @@ def test_create_new_player():
     success = game.create_new_player("john", "Michel")
 
     assert not success
+
+
+def test_build_ship():
+    game_state = initialise_gamestate()
+
+    game = Game(game_state)
+
+    success = game.action_build_ship("max", "earth", "light_fighter")
+
+    assert not success
+
+    game.update(1000)
+
+    success = game.action_upgrade_building("max", "earth", "ship_yard")
+
+    assert success
+
+    success = game.action_build_ship("max", "earth", "light_fighter")
+
+    assert success
+
+    assert len(game_state.players["max"].ships) == 1
+    assert (
+        game_state.players["max"].ships[0].components[ShipComponent].name
+        == "LightFighter"
+    )
