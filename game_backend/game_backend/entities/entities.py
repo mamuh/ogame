@@ -5,13 +5,12 @@ from game_backend.ecs.entity import Entity
 from game_backend.components import PlanetComponent, PlayerComponent
 from game_backend.resources import Resources
 from game_backend.entities.buildings import Building, Buildings
-from game_backend.entities.ships import Ship
+from game_backend.entities.ships import Fleet
 
 
 @dataclass
 class Planet(Entity):
     buildings: Dict[str, Building] = field(default_factory=Buildings)
-    ships: List[Ship] = field(default_factory=list)
 
     @classmethod
     def new(
@@ -33,7 +32,7 @@ class World(Entity):
 
 @dataclass
 class Player(Entity):
-    ships: List[Ship] = field(default_factory=list)
+    fleets: List[Fleet] = field(default_factory=list)
 
     @classmethod
     def new(cls, id: str, name: str):

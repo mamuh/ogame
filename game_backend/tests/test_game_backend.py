@@ -161,8 +161,11 @@ def test_build_ship():
 
     assert success
 
-    assert len(game_state.players["max"].ships) == 1
+    assert len(game_state.players["max"].fleets) == 1
     assert (
-        game_state.players["max"].ships[0].components[ShipComponent].name
-        == "LightFighter"
+        game_state.players["max"]
+        .fleets[0]
+        .light_fighter.components[ShipComponent]
+        .number
+        == 1
     )

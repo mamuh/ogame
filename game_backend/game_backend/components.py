@@ -33,6 +33,7 @@ class BuildingComponent(Component, JsonSchemaMixin):
 @dataclass
 class ShipComponent(Component, JsonSchemaMixin):
     name: str
+    number: int
     cost: Dict[Resources, float]
     speed: float
     cargo: float
@@ -43,6 +44,14 @@ class CombatComponent(Component, JsonSchemaMixin):
     hp: float
     shield: float
     damage: float
+
+
+@dataclass
+class FleetPositionComponent(Component, JsonSchemaMixin):
+    current_planet_id: str
+    in_transit: bool
+    travelling_to: str
+    travelling_from: str
 
 
 @dataclass
