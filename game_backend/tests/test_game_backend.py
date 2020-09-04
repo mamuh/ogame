@@ -126,14 +126,8 @@ def test_upgrade_building():
         assert "unknown player" in str(excinfo.value).lower()
 
 
-def test_empty_universe():
-    game_state = initialise_empty_universe(2)
-
-    assert len(game_state.world.planets) == 2
-
-
 def test_create_new_player():
-    game_state = initialise_empty_universe(2)
+    game_state = initialise_empty_universe()
 
     game = Game(game_state)
 

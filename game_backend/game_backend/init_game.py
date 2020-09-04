@@ -29,22 +29,6 @@ def initialise_gamestate() -> GameState:
     return game_state
 
 
-def initialise_empty_universe(size: int) -> GameState:
-    game_state = GameState(
-        world=World(
-            planets={
-                f"planet_{i}": Planet.new(
-                    name=f"Planet_{i}",
-                    planet_id=f"planet_{i}",
-                    size=random.randint(100, 300),
-                    position=random.randint(1, 9),
-                    solar_system=random.randint(1, 500),
-                    galaxy=random.randint(1, 5),
-                    owner_id=None,
-                )
-                for i in range(size)
-            }
-        ),
-        players={},
-    )
+def initialise_empty_universe() -> GameState:
+    game_state = GameState(world=World(planets={}), players={},)
     return game_state
