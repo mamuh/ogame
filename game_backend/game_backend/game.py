@@ -59,6 +59,7 @@ class Game(Thread):
     def create_new_player(self, player_id: str, player_name: str) -> bool:
         if player_id in self.game_state.players:
             # Name is already taken...
+            print("name taken")
             return False
         free_location = PositionSystem.get_random_free_location()
         planet_id = f"planet-{free_location.galaxy}-{free_location.system}-{free_location.position}"
