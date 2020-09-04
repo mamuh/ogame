@@ -14,7 +14,16 @@ from game_backend.components import (
     BuildingComponent,
     ShipComponent,
 )
+from game_backend.systems.position_system import PositionSystem
 import game_backend.entities
+
+
+@pytest.fixture(autouse=True, scope="function")
+def teardown(request):
+    def fin():
+        PositionSystem.reset()
+
+    request.addfinalizer(fin)
 
 
 def test_version():
@@ -118,13 +127,13 @@ def test_upgrade_building():
 
 
 def test_empty_universe():
-    game_state = initialise_empty_universe(100)
+    game_state = initialise_empty_universe(2)
 
-    assert len(game_state.world.planets) == 100
+    assert len(game_state.world.planets) == 2
 
 
 def test_create_new_player():
-    game_state = initialise_empty_universe(100)
+    game_state = initialise_empty_universe(2)
 
     game = Game(game_state)
 
@@ -132,8 +141,10 @@ def test_create_new_player():
 
     assert success
 
+    john_planets = PositionSystem.get_player_planets("john")
+
     assert (
-        game_state.world.planets["planet_0"].components[PlanetComponent].owner_id
+        game_state.world.planets[john_planets[0]].components[PlanetComponent].owner_id
         == "john"
     )
 

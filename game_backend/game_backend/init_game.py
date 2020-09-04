@@ -15,6 +15,7 @@ def initialise_gamestate() -> GameState:
             planets={
                 "earth": Planet.new(
                     name="Earth",
+                    planet_id="earth",
                     size=16,
                     position=4,
                     solar_system=1,
@@ -34,6 +35,7 @@ def initialise_empty_universe(size: int) -> GameState:
             planets={
                 f"planet_{i}": Planet.new(
                     name=f"Planet_{i}",
+                    planet_id=f"planet_{i}",
                     size=random.randint(100, 300),
                     position=random.randint(1, 9),
                     solar_system=random.randint(1, 500),

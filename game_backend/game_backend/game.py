@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from threading import Thread
 import time
+import random
 
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
 from game_backend.systems.production_system import ProductionSystem
 from game_backend.systems.ship_building_system import ShipBuildingSystem
-from game_backend.entities.entities import Player
+from game_backend.systems.position_system import PositionSystem
+from game_backend.entities.entities import Player, Planet
 
 
 @dataclass
@@ -58,16 +60,19 @@ class Game(Thread):
         if player_id in self.game_state.players:
             # Name is already taken...
             return False
-        empty_planets = [
-            planet.components[PlanetComponent]
-            for planet in self.game_state.world.planets.values()
-            if planet.components[PlanetComponent].owner_id is None
-        ]
-        if len(empty_planets) == 0:
-            # No more space for a new player...
-            return False
+        free_location = PositionSystem.get_random_free_location()
+        planet_id = f"planet-{free_location.galaxy}-{free_location.system}-{free_location.position}"
+        new_planet = Planet.new(
+            planet_id,
+            planet_id,
+            random.randint(170, 210),
+            free_location.position,
+            free_location.system,
+            free_location.galaxy,
+            owner_id=player_id,
+        )
+        self.game_state.world.planets[planet_id] = new_planet
         self.game_state.players[player_id] = Player.new(id=player_id, name=player_name)
-        empty_planets[0].owner_id = player_id
         return True
 
     def run(self):

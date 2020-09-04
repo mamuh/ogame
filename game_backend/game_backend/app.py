@@ -15,6 +15,11 @@ def index():
     return "Hello World"
 
 
+@app.route("/ping")
+def ping():
+    return "pong"
+
+
 @app.route("/get_state")
 def get_state():
     return json.dumps(game_state.serialise())

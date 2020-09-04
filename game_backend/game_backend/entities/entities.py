@@ -19,6 +19,7 @@ class Planet(Entity):
     @classmethod
     def new(
         cls,
+        planet_id: str,
         name: str,
         size: int,
         position: int,
@@ -26,7 +27,10 @@ class Planet(Entity):
         galaxy: int,
         owner_id: str = None,
     ):
-        return cls(
+        # HACK
+        from game_backend.systems.position_system import PositionSystem
+
+        planet = cls(
             components={
                 PlanetComponent: PlanetComponent(
                     name=name, size=size, owner_id=owner_id
@@ -36,6 +40,8 @@ class Planet(Entity):
                 ),
             },
         )
+        PositionSystem.register_planet(planet_id, planet)
+        return planet
 
 
 @dataclass
