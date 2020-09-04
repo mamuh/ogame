@@ -68,6 +68,13 @@ class StorageComponent(Component, JsonSchemaMixin):
 
 
 @dataclass
+class PlanetPositionComponent(Component, JsonSchemaMixin):
+    galaxy: int
+    solar_system: int
+    position: int
+
+
+@dataclass
 class PlanetComponent(Component, JsonSchemaMixin):
     name: str
     size: int

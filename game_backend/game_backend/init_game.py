@@ -12,7 +12,16 @@ from game_backend.entities.entities import (
 def initialise_gamestate() -> GameState:
     game_state = GameState(
         world=World(
-            planets={"earth": Planet.new(name="Earth", size=16, owner_id="max",)}
+            planets={
+                "earth": Planet.new(
+                    name="Earth",
+                    size=16,
+                    position=4,
+                    solar_system=1,
+                    galaxy=1,
+                    owner_id="max",
+                )
+            }
         ),
         players={"max": Player.new(id="max", name="Max")},
     )
@@ -24,7 +33,12 @@ def initialise_empty_universe(size: int) -> GameState:
         world=World(
             planets={
                 f"planet_{i}": Planet.new(
-                    name=f"Planet_{i}", size=random.randint(10, 20), owner_id=None,
+                    name=f"Planet_{i}",
+                    size=random.randint(100, 300),
+                    position=random.randint(1, 9),
+                    solar_system=random.randint(1, 500),
+                    galaxy=random.randint(1, 5),
+                    owner_id=None,
                 )
                 for i in range(size)
             }

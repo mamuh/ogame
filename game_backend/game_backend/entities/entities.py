@@ -2,7 +2,11 @@ from dataclasses import dataclass, field
 from typing import List, Dict
 
 from game_backend.ecs.entity import Entity
-from game_backend.components import PlanetComponent, PlayerComponent
+from game_backend.components import (
+    PlanetComponent,
+    PlayerComponent,
+    PlanetPositionComponent,
+)
 from game_backend.resources import Resources
 from game_backend.entities.buildings import Building, Buildings
 from game_backend.entities.ships import Fleet
@@ -14,13 +18,22 @@ class Planet(Entity):
 
     @classmethod
     def new(
-        cls, name: str, size: int, owner_id: str = None,
+        cls,
+        name: str,
+        size: int,
+        position: int,
+        solar_system: int,
+        galaxy: int,
+        owner_id: str = None,
     ):
         return cls(
             components={
                 PlanetComponent: PlanetComponent(
                     name=name, size=size, owner_id=owner_id
-                )
+                ),
+                PlanetPositionComponent: PlanetPositionComponent(
+                    galaxy=galaxy, solar_system=solar_system, position=position
+                ),
             },
         )
 
