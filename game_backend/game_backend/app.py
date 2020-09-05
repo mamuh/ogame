@@ -30,6 +30,23 @@ def new_player(name: str):
     return str(game_thread.create_new_player(name, name))
 
 
+@app.route("/player/<player_id>/get/planets")
+def get_player_planets(player_id: str):
+    return json.dumps(
+        {
+            planet_id: planet.serialise()
+            for planet_id, planet in game_thread.get_player_planets(player_id).items()
+        }
+    )
+
+
+@app.route("/player/<player_id>/get/fleets")
+def get_player_fleets(player_id: str):
+    return json.dumps(
+        [fleet.serialise() for fleet in game_thread.get_player_fleets(player_id)]
+    )
+
+
 @app.route(
     "/player/<player_id>/actions/upgrade_building/<planet_id>/<building_id>",
     methods=["POST"],

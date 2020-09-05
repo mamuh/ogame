@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from threading import Thread
 import time
 import random
+from typing import List, Dict
 
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
@@ -9,6 +10,7 @@ from game_backend.systems.production_system import ProductionSystem
 from game_backend.systems.ship_building_system import ShipBuildingSystem
 from game_backend.systems.position_system import PositionSystem
 from game_backend.entities.entities import Player, Planet
+from game_backend.entities.ships import Fleet
 
 
 @dataclass
@@ -30,17 +32,36 @@ class Game(Thread):
         # Production round
         ProductionSystem.update(dt)
 
-    def check_player_planet(self, player_id: str, planet_id: str):
+    def check_player_id(self, player_id: str):
         assert player_id in self.game_state.players, f"Unknown player id {player_id}"
+
+    def check_planet_id(self, planet_id: str):
         assert (
             planet_id in self.game_state.world.planets
         ), f"Unknown planet id {planet_id}"
+
+    def check_player_planet(self, player_id: str, planet_id: str):
+        self.check_player_id(player_id)
+        self.check_planet_id(planet_id)
         assert (
             self.game_state.world.planets[planet_id]
             .components[PlanetComponent]
             .owner_id
             == player_id
         ), f"Player {player_id} does not own planet {planet_id}"
+
+    def get_player_planets(self, player_id: str) -> Dict[str, Planet]:
+        self.check_player_id(player_id)
+        planet_ids = PositionSystem.get_player_planets(player_id)
+        return {
+            planet_id: self.game_state.world.planets[planet_id]
+            for planet_id in planet_ids
+        }
+
+    def get_player_fleets(self, player_id: str) -> List[Fleet]:
+        self.check_player_id(player_id)
+        fleets = self.game_state.players[player_id].fleets
+        return fleets
 
     def action_upgrade_building(
         self, player_id: str, planet_id: str, building_id: str
