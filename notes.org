@@ -1,0 +1,7 @@
+#+TITLE: Notes
+
+* Saturday 2020-09-05
+** todos
+*** TODO Build fleet movement system
+*** TODO Build combat system
+*** TODO Add research and requirements
