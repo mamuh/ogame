@@ -4,31 +4,13 @@ from typing import Dict
 from game_backend.ecs.entity import EntityCatalog
 from game_backend.entities.entities import GameState
 from game_backend.entities.ships import Fleet
-from game_backend.resources import Resources
+from game_backend.resources import Resources, sufficient_funds, subtract_cost
 from game_backend.components import (
     BuildingComponent,
     PlanetComponent,
     ShipComponent,
     FleetPositionComponent,
 )
-
-
-def sufficient_funds(
-    cost: Dict[Resources, float], available: Dict[Resources, float]
-) -> bool:
-    for resource, quantity in cost.items():
-        if quantity > available.get(resource, 0):
-            return False
-    return True
-
-
-def subtract_cost(
-    cost: Dict[Resources, float], available: Dict[Resources, float]
-) -> Dict[Resources, float]:
-    return {
-        resource: available_quantity - cost[resource]
-        for resource, available_quantity in available.items()
-    }
 
 
 class ShipBuildingSystem:

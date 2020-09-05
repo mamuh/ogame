@@ -9,6 +9,7 @@ from game_backend.components import PlanetComponent, ProducerComponent, PlayerCo
 from game_backend.systems.production_system import ProductionSystem
 from game_backend.systems.ship_building_system import ShipBuildingSystem
 from game_backend.systems.position_system import PositionSystem
+from game_backend.systems.mission_system import MissionSystem
 from game_backend.entities.entities import Player, Planet
 from game_backend.entities.ships import Fleet
 
@@ -31,6 +32,7 @@ class Game(Thread):
     def update(self, dt):
         # Production round
         ProductionSystem.update(dt)
+        MissionSystem.update(dt)
 
     def check_player_id(self, player_id: str):
         assert player_id in self.game_state.players, f"Unknown player id {player_id}"

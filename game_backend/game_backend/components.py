@@ -5,7 +5,7 @@ from typing import Dict, List
 from dataclasses_jsonschema import JsonSchemaMixin
 
 from game_backend.ecs.component import Component
-from game_backend.resources import Resources
+from game_backend.resources import Resources, empty_resources
 
 
 @dataclass
@@ -52,6 +52,10 @@ class FleetPositionComponent(Component, JsonSchemaMixin):
     in_transit: bool
     travelling_to: str
     travelling_from: str
+    cargo: Dict[Resources, float] = field(default_factory=empty_resources)
+    travel_time_total: float = None
+    travel_time_left: float = None
+    mission: str = None
 
 
 @dataclass

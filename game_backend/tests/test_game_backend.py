@@ -2,7 +2,11 @@ import json
 import pytest
 
 from game_backend import __version__
-from game_backend.init_game import initialise_gamestate, initialise_empty_universe
+from game_backend.init_game import (
+    initialise_gamestate,
+    initialise_empty_universe,
+    init_state_complex,
+)
 from game_backend.game import Game
 from game_backend.resources import Resources
 from game_backend.entities.entities import GameState
@@ -13,8 +17,10 @@ from game_backend.components import (
     PlanetComponent,
     BuildingComponent,
     ShipComponent,
+    FleetPositionComponent,
 )
 from game_backend.systems.position_system import PositionSystem
+from game_backend.systems.mission_system import MissionSystem
 import game_backend.entities
 
 
@@ -174,3 +180,27 @@ def test_build_ship():
         .number
         == 1
     )
+
+
+def test_fleet_transport():
+    game_state = init_state_complex()
+
+    game = Game(game_state)
+
+    game.update(100)
+    fleet = game_state.players["max"].fleets[0]
+    fleet_comp = fleet.components[FleetPositionComponent]
+    MissionSystem.order_mission(
+        fleet, "TRANSPORT", "mars", {Resources.Metal: 2, Resources.Oil: 0.5},
+    )
+
+    game.update(0.5)
+
+    assert fleet_comp.travelling_to == "mars"
+    assert fleet_comp.cargo[Resources.Metal] == 2
+
+    game.update(1)
+
+    assert fleet_comp.mission == "RETURN"
+    assert fleet_comp.travelling_to == "earth"
+    assert fleet_comp.cargo[Resources.Metal] == 0

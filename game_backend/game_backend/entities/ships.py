@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from dataclasses import dataclass, field
+from typing import Dict, List
 
 from game_backend.ecs.entity import Entity
 from game_backend.components import (
@@ -62,6 +63,9 @@ class Fleet(Entity):
                 )
             }
         )
+
+    def get_ships(self) -> List[Ship]:
+        return [self.light_fighter, self.heavy_fighter]
 
 
 ships_index = {"light_fighter": LightFighter, "heavy_fighter": HeavyFighter}
