@@ -56,6 +56,13 @@ def upgrade_building(player_id: str, planet_id: str, building_id: str):
 
 
 @app.route(
+    "/player/<player_id>/actions/build_ship/<planet_id>/<ship_id>", methods=["POST"],
+)
+def build_ship(player_id: str, planet_id: str, ship_id: str):
+    return str(game_thread.action_build_ship(player_id, planet_id, ship_id))
+
+
+@app.route(
     "/player/<player_id>/actions/build_ship/<planet_id>/<ship_id>", methods=["POST"]
 )
 def build_ship(player_id: str, planet_id: str, ship_id: str):
