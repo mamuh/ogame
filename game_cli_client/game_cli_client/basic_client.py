@@ -39,21 +39,29 @@ def ask_for_options(options: List[str]):
     return options[int(user_input)]
 
 
-def get_player_planets(game_state, player_id: str):
-    player_planets = [
-        planet_id
-        for planet_id, planet in game_state["world"]["planets"].items()
-        if planet["components"]["PlanetComponent"]["owner_id"] == player_id
-    ]
-    return player_planets
+def get_player_data(player_id: str):
+    return {
+        "planets": get_player_planets(player_id),
+        "fleets": get_player_fleets(player_id),
+    }
 
 
-def display_game_state(game_state, player_id: str):
-    player_planets = get_player_planets(game_state, player_id)
+def get_player_planets(player_id: str) -> Dict[str, Dict]:
+    response = requests.get(f"{server_url}/player/{player_id}/get/planets")
+    return response.json()
+
+
+def get_player_fleets(player_id: str) -> List[Dict]:
+    response = requests.get(f"{server_url}/player/{player_id}/get/fleets")
+    return response.json()
+
+
+def display_game_state(player_data, player_id: str):
+    player_planets = player_data["planets"]
+    player_fleets = player_data["fleets"]
     print()
     print("Your Planets")
-    for planet_id in player_planets:
-        planet = game_state["world"]["planets"][planet_id]
+    for planet_id, planet in player_planets.items():
         planet_comp = planet["components"]["PlanetComponent"]
         print(planet_comp["name"])
         print("Resources:")
@@ -70,7 +78,7 @@ def display_game_state(game_state, player_id: str):
         print()
     print()
     print("Your Fleet")
-    for fleet in game_state["players"][player_id]["fleets"]:
+    for fleet in player_fleets:
         print(fleet)
 
 
@@ -108,27 +116,18 @@ def run():
     print(f"You are now logged in as {player_id}.")
 
     while True:
-        game_state = get_game_state()
-        display_game_state(game_state, player_id)
+        player_data = get_player_data(player_id)
+        display_game_state(player_data, player_id)
         choice = ask_for_options(["Refresh", "Upgrade Building"])
 
         if choice == "Refresh":
             continue
         elif choice == "Upgrade Building":
             print("Planet:")
-            planet_id = ask_for_options(get_player_planets(game_state, player_id))
+            planet_id = ask_for_options(list(player_data["planets"].keys()))
+            planet = player_data["planets"][planet_id]
             print("Building to upgrade:")
-            building_id = ask_for_options(
-                [
-                    "mine",
-                    "oil_rig",
-                    "solar_plant",
-                    "metal_hangar",
-                    "oil_tank",
-                    "ship_yard",
-                    "missile_turret",
-                ]
-            )
+            building_id = ask_for_options(list(planet["buildings"].keys()))
             upgrade_building(building_id, planet_id, player_id)
 
 
