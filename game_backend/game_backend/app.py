@@ -4,7 +4,8 @@ import json
 from flask import Flask, request
 
 from game_backend.game import Game
-from game_backend.init_game import initialise_gamestate
+from game_backend.init_game import initialise_gamestate, init_state_complex
+from game_backend.resources import Resources
 
 
 app = Flask(__name__)
@@ -63,14 +64,26 @@ def build_ship(player_id: str, planet_id: str, ship_id: str):
 
 
 @app.route(
-    "/player/<player_id>/actions/build_ship/<planet_id>/<ship_id>", methods=["POST"]
+    "/player/<player_id>/actions/send_mission/<planet_id>/<mission>", methods=["POST"]
 )
-def build_ship(player_id: str, planet_id: str, ship_id: str):
-    return str(game_thread.action_build_ship(player_id, planet_id, ship_id))
+def send_mission(player_id: str, planet_id: str, mission: str):
+    content = request.json
+    assert "destination_id" in content
+
+    destination_id = content["destination_id"]
+    if "cargo" in content:
+        assert isinstance(content["cargo"], dict)
+        cargo = {Resources(res): quantity for res, quantity in content["cargo"].items()}
+    else:
+        cargo = None
+    action_outcome = game_thread.action_send_mission(
+        player_id, planet_id, mission, destination_id, cargo
+    )
+    return action_outcome.to_json()
 
 
 if __name__ == "__main__":
-    game_state = initialise_gamestate()
+    game_state = init_state_complex()
     game_thread = Game(game_state)
 
     game_thread.start()

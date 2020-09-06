@@ -8,6 +8,7 @@ from game_backend.entities.entities import (
     Player,
 )
 from game_backend.entities.ships import Fleet
+from game_backend.components import ShipComponent
 
 
 def initialise_gamestate() -> GameState:
@@ -62,8 +63,8 @@ def init_state_complex() -> GameState:
         players={"max": Player.new(id="max", name="Max")},
     )
     earth_fleet = Fleet.new("earth")
-    earth_fleet.light_fighter.number = 10
+    earth_fleet.light_fighter.components[ShipComponent].number = 10
     mars_fleet = Fleet.new("mars")
-    mars_fleet.heavy_fighter.number = 5
+    mars_fleet.heavy_fighter.components[ShipComponent].number = 5
     game_state.players["max"].fleets = [earth_fleet, mars_fleet]
     return game_state

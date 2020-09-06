@@ -18,11 +18,16 @@ from game_backend.resources import (
 )
 
 
-VALID_MISSIONS = ["TRANSPORT", "RETURN"]
+VALID_MISSIONS = ["TRANSPORT", "RETURN", "COLONIZE"]
+
+
+class MissionException(Exception):
+    pass
 
 
 class MissionSystem:
     def update(self, dt):
+        # TODO Make sure there is only one fleet per planet at the end of this update
         game_state: GameState = EntityCatalog.get_special("game_state")
 
         for player in game_state.players.values():
@@ -62,8 +67,9 @@ class MissionSystem:
 
         elif fleet_pos_comp.mission == "RETURN":
             destination_planet = game_state.world.planets[fleet_pos_comp.travelling_to]
-            destination_planet.resources = add_resources(
-                destination_planet.resources, fleet_pos_comp.cargo
+            dest_planet_comp = destination_planet.components[PlanetComponent]
+            dest_planet_comp.resources = add_resources(
+                dest_planet_comp.resources, fleet_pos_comp.cargo
             )
             fleet_pos_comp.cargo = empty_resources()
 
@@ -74,6 +80,9 @@ class MissionSystem:
             ) = (
                 fleet_pos_comp.mission
             ) = fleet_pos_comp.travel_time_total = fleet_pos_comp.travel_time_left = 0
+
+        elif fleet_pos_comp.mission == "COLONIZE":
+            pass
 
     def compute_travelling_time(
         self, game_state: GameState, fleet: Fleet, from_id: str, to_id: str
@@ -94,14 +103,30 @@ class MissionSystem:
         position_to = planet_to.components[PlanetPositionComponent].position
 
         total_distance = (
-            abs(galaxy_to - galaxy_from) * 1000
-            + abs(system_to - system_from) * 100
-            + abs(position_to - position_from) * 10
+            abs(galaxy_to - galaxy_from) * 10000
+            + abs(system_to - system_from) * 1000
+            + abs(position_to - position_from) * 100
         )
 
         travelling_time = total_distance / fleet_speed
 
         return travelling_time
+
+    def get_planet_fleet(self, player_id: str, planet_id: str) -> Fleet:
+        """
+        Returns None if no fleet was found at this planet
+        """
+        game_state: GameState = EntityCatalog.get_special("game_state")
+
+        assert player_id in game_state.players
+        player = game_state.players[player_id]
+
+        for fleet in player.fleets:
+            fleet_comp = fleet.components[FleetPositionComponent]
+            if not fleet_comp.in_transit and fleet_comp.current_planet_id == planet_id:
+                # There should only be one per planet so we can return it...
+                return fleet
+        # if nothing was found, will return None
 
     def order_mission(
         self,
@@ -112,7 +137,7 @@ class MissionSystem:
     ):
         game_state: GameState = EntityCatalog.get_special("game_state")
         if cargo is None:
-            cargo = emtpy_resources()
+            cargo = empty_resources()
 
         fleet_comp = fleet.components[FleetPositionComponent]
 
@@ -120,15 +145,15 @@ class MissionSystem:
             not fleet_comp.in_transit
         ), "Cannot assign mission to fleet already in transit"
         assert mission in VALID_MISSIONS, f"Invalid mission: {mission}"
+
         assert (
             destination_id in game_state.world.planets
         ), f"Cannot find planet_id {destination_id}"
 
         planet_from = game_state.world.planets[fleet_comp.current_planet_id]
         planet_comp = planet_from.components[PlanetComponent]
-        assert sufficient_funds(
-            cargo, planet_comp.resources
-        ), "Insufficient resources on planet"
+        if not sufficient_funds(cargo, planet_comp.resources):
+            raise MissionException("Insufficient resources on planet")
 
         planet_from.resources = subtract_cost(cargo, planet_comp.resources)
         fleet_comp.mission = mission

@@ -158,9 +158,9 @@ def test_build_ship():
 
     game = Game(game_state)
 
-    success = game.action_build_ship("max", "earth", "light_fighter")
+    outcome = game.action_build_ship("max", "earth", "light_fighter")
 
-    assert not success
+    assert not outcome.success
 
     game.update(1000)
 
@@ -168,9 +168,9 @@ def test_build_ship():
 
     assert success
 
-    success = game.action_build_ship("max", "earth", "light_fighter")
+    outcome = game.action_build_ship("max", "earth", "light_fighter")
 
-    assert success
+    assert outcome.success
 
     assert len(game_state.players["max"].fleets) == 1
     assert (
@@ -194,12 +194,39 @@ def test_fleet_transport():
         fleet, "TRANSPORT", "mars", {Resources.Metal: 2, Resources.Oil: 0.5},
     )
 
-    game.update(0.5)
+    game.update(5)
 
     assert fleet_comp.travelling_to == "mars"
     assert fleet_comp.cargo[Resources.Metal] == 2
 
-    game.update(1)
+    game.update(10)
+
+    assert fleet_comp.mission == "RETURN"
+    assert fleet_comp.travelling_to == "earth"
+    assert fleet_comp.cargo[Resources.Metal] == 0
+
+
+def test_fleet_transport_from_game():
+    game_state = init_state_complex()
+
+    game = Game(game_state)
+
+    game.update(100)
+
+    game.action_send_mission(
+        "max", "earth", "TRANSPORT", "mars", {Resources.Metal: 2, Resources.Oil: 0.5}
+    )
+
+    game.update(5)
+
+    fleets = game.get_player_fleets("max")
+
+    fleet_comp = fleets[0].components[FleetPositionComponent]
+
+    assert fleet_comp.travelling_to == "mars"
+    assert fleet_comp.cargo[Resources.Metal] == 2
+
+    game.update(10)
 
     assert fleet_comp.mission == "RETURN"
     assert fleet_comp.travelling_to == "earth"

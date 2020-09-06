@@ -2,6 +2,18 @@
 
 * Saturday 2020-09-05
 ** todos
-*** TODO Build fleet movement system
+*** PROJ Build fleet movement system
 *** TODO Build combat system
 *** TODO Add research and requirements
+
+* Sunday 2020-09-06
+** todos
+*** TODO Improve game_state tree
+possible better structure: game_state -> players -> planets
+                                                 -> fleets
+or flat structure
+game_state
+   -> players
+   -> planets
+   -> fleets
+with links. Difficulty in maintaining the links

@@ -46,10 +46,25 @@ def HeavyFighter() -> Ship:
     )
 
 
+def ColonyShip() -> Ship:
+    return Ship(
+        components={
+            ShipComponent: ShipComponent(
+                name="ColonyShip",
+                number=0,
+                cost={Resources.Metal: 10, Resources.Oil: 0},
+                speed=20,
+                cargo=500,
+            )
+        }
+    )
+
+
 @dataclass
 class Fleet(Entity):
     light_fighter: Ship = field(default_factory=LightFighter)
     heavy_fighter: Ship = field(default_factory=HeavyFighter)
+    colony_ship: Ship = field(default_factory=ColonyShip)
 
     @classmethod
     def new(cls, planet_id: str):
@@ -68,4 +83,8 @@ class Fleet(Entity):
         return [self.light_fighter, self.heavy_fighter]
 
 
-ships_index = {"light_fighter": LightFighter, "heavy_fighter": HeavyFighter}
+ships_index = {
+    "light_fighter": LightFighter,
+    "heavy_fighter": HeavyFighter,
+    "colony_ship": ColonyShip,
+}

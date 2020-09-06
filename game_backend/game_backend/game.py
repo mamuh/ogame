@@ -4,19 +4,27 @@ import time
 import random
 from typing import List, Dict
 
+from dataclasses_jsonschema import JsonSchemaMixin
+
 from game_backend.config import TARGET_UPDATE_TIME
 from game_backend.components import PlanetComponent, ProducerComponent, PlayerComponent
 from game_backend.systems.production_system import ProductionSystem
 from game_backend.systems.ship_building_system import ShipBuildingSystem
 from game_backend.systems.position_system import PositionSystem
-from game_backend.systems.mission_system import MissionSystem
-from game_backend.entities.entities import Player, Planet
+from game_backend.systems.mission_system import (
+    MissionSystem,
+    MissionException,
+    VALID_MISSIONS,
+)
+from game_backend.entities.entities import GameState, Player, Planet
 from game_backend.entities.ships import Fleet
+from game_backend.resources import Resources
 
 
 @dataclass
-class GameState:
-    pass
+class ActionOutcome(JsonSchemaMixin):
+    success: bool
+    reason: str = None
 
 
 class Game(Thread):
@@ -75,9 +83,36 @@ class Game(Thread):
             .upgrade_building(building_id)
         )
 
-    def action_build_ship(self, player_id: str, planet_id: str, ship_id: str) -> bool:
+    def action_build_ship(
+        self, player_id: str, planet_id: str, ship_id: str
+    ) -> ActionOutcome:
         self.check_player_planet(player_id, planet_id)
-        return ShipBuildingSystem.build_ship(player_id, planet_id, ship_id)
+        result = ShipBuildingSystem.build_ship(player_id, planet_id, ship_id)
+        return ActionOutcome(success=result)
+
+    def action_send_mission(
+        self,
+        player_id: str,
+        planet_id: str,
+        mission: str,
+        destination_id: str,
+        cargo: Dict[Resources, float] = None,
+    ) -> ActionOutcome:
+        self.check_player_planet(player_id, planet_id)
+        self.check_planet_id(destination_id)
+        assert mission in VALID_MISSIONS
+
+        fleet = MissionSystem.get_planet_fleet(player_id, planet_id)
+        if fleet is None:
+            return ActionOutcome(success=False, reason="No fleet at this planet")
+        try:
+            MissionSystem.order_mission(fleet, mission, destination_id, cargo)
+        except MissionException:
+            # ATM raised only when resources on planet are insufficient
+            return ActionOutcome(
+                success=False, reason="Insufficient resources at this planet"
+            )
+        return ActionOutcome(success=True)
 
     def create_new_player(self, player_id: str, player_name: str) -> bool:
         if player_id in self.game_state.players:
