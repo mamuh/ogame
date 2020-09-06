@@ -245,3 +245,33 @@ def test_fleet_transport_from_game():
     assert fleet_comp.mission == "RETURN"
     assert fleet_comp.travelling_to == PlanetLocation(1, 1, 3)
     assert fleet_comp.cargo[Resources.Metal] == 0
+
+
+def test_colonize_planet():
+    game_state = init_state_complex()
+    game = Game(game_state)
+
+    earth = PlanetLocation(1, 1, 3)
+
+    game.update(100)
+    game.action_upgrade_building("max", earth, "ship_yard")
+    game.update(100)
+    game.action_build_ship("max", earth, "colony_ship")
+
+    game.action_send_mission(
+        "max", earth, "COLONIZE", PlanetLocation(1, 1, 5), cargo={Resources.Metal: 5}
+    )
+
+    game.update(15)
+    game.update(15)
+
+    assert len(game_state.world.planets) == 3
+    new_planet = game_state.world.planets[PlanetLocation(1, 1, 5)]
+    new_planet_comp = new_planet.components[PlanetComponent]
+
+    assert new_planet_comp.resources[Resources.Metal] == 5
+
+    game.update(15)
+
+    assert new_planet_comp.resources[Resources.Metal] == 20
+    assert new_planet.buildings["mine"].components[BuildingComponent].level == 0

@@ -35,7 +35,7 @@ class ShipBuildingSystem:
                 planet_fleet = fleet
                 break
         if planet_fleet is None:
-            planet_fleet = Fleet.new(planet_id)
+            planet_fleet = Fleet.new(player_id, planet_id)
             player.fleets.append(planet_fleet)
 
         assert hasattr(planet_fleet, ship_id), f"Invalid ship id: {ship_id}"

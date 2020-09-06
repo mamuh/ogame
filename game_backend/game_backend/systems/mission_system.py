@@ -1,13 +1,14 @@
 from typing import List, Dict
 
 from game_backend.ecs.entity import EntityCatalog
-from game_backend.entities.entities import GameState
+from game_backend.entities.entities import GameState, Planet
 from game_backend.components import (
     FleetPositionComponent,
     ShipComponent,
     PlanetComponent,
 )
 from game_backend.entities.ships import Fleet
+from game_backend.systems.position_system import PositionSystem
 from game_backend.resources import (
     Resources,
     add_resources,
@@ -82,22 +83,69 @@ class MissionSystem:
             ) = fleet_pos_comp.travel_time_total = fleet_pos_comp.travel_time_left = 0
 
         elif fleet_pos_comp.mission == "COLONIZE":
-            pass
+            if not PositionSystem.is_location_free(fleet_pos_comp.travelling_to):
+                self.finish_mission_and_return(fleet)
+            else:
+                # Remove one colony ship
+                fleet.colony_ship.components[ShipComponent].number -= 1
+                # Create new planet
+                planet_id = fleet_pos_comp.travelling_to
+                # TODO: generate size
+                planet = Planet.new(
+                    name=str(planet_id),
+                    planet_id=planet_id,
+                    size=250,
+                    location=planet_id,
+                    owner_id=fleet.owner_id,
+                )
+                game_state.world.planets[planet_id] = planet
+
+                # Deposit cargo
+                planet_comp = planet.components[PlanetComponent]
+                planet_comp.resources = add_resources(
+                    planet_comp.resources, fleet_pos_comp.cargo
+                )
+                fleet_pos_comp.cargo = empty_resources()
+
+                # Fleet stays at new planet
+                self.stop_fleet(fleet)
+
+    def finish_mission_and_return(self, fleet: Fleet):
+        fleet_comp = fleet.components[FleetPositionComponent]
+        assert fleet_comp.in_transit
+        fleet_comp.mission = "RETURN"
+        prev_destination = fleet_comp.travelling_to
+        fleet_comp.travelling_to = fleet_comp.travelling_from
+        fleet_comp.travelling_from = prev_destination
+        fleet_comp.travel_time_left = fleet_comp.travel_time_total
+
+    def stop_fleet(self, fleet: Fleet):
+        """
+        Stops a fleet when it has reached its destination. It wont be in transit anymore
+        """
+        fleet_comp = fleet.components[FleetPositionComponent]
+        fleet_comp.current_location = fleet_comp.travelling_to
+        fleet_comp.in_transit = False
+        fleet_comp.travelling_to = (
+            fleet_comp.travelling_from
+        ) = fleet_comp.mission = None
+        fleet_comp.travel_time_total = fleet_comp.travel_time_left = 0
 
     def compute_travelling_time(
-        self, game_state: GameState, fleet: Fleet, from_id: str, to_id: str
+        self,
+        game_state: GameState,
+        fleet: Fleet,
+        from_id: PlanetLocation,
+        to_id: PlanetLocation,
     ):
-        planet_from = game_state.world.planets[from_id]
-        planet_to = game_state.world.planets[to_id]
-
+        fleet_comp = fleet.components[FleetPositionComponent]
         ships = fleet.get_ships()
 
         fleet_speed = min([ship.components[ShipComponent].speed for ship in ships])
 
-        location_from = planet_from.components[PlanetComponent].location
-        location_to = planet_to.components[PlanetComponent].location
-
-        total_distance = location_from.distance_from(location_to)
+        total_distance = fleet_comp.travelling_from.distance_from(
+            fleet_comp.travelling_to
+        )
         travelling_time = total_distance / fleet_speed
 
         return travelling_time
@@ -136,9 +184,10 @@ class MissionSystem:
         ), "Cannot assign mission to fleet already in transit"
         assert mission in VALID_MISSIONS, f"Invalid mission: {mission}"
 
-        assert (
-            destination_id in game_state.world.planets
-        ), f"Cannot find planet_id {destination_id}"
+        if mission != "COLONIZE":
+            assert (
+                destination_id in game_state.world.planets
+            ), f"Cannot find planet id {destination_id}"
 
         planet_from = game_state.world.planets[fleet_comp.current_location]
         planet_comp = planet_from.components[PlanetComponent]

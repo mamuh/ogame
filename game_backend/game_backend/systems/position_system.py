@@ -23,6 +23,9 @@ class PositionSystem:
         self.planets_index[location] = planet_id
         self.player_planets.setdefault(planet_comp.owner_id, []).append(planet_id)
 
+    def is_location_free(self, location: PlanetLocation):
+        return location not in self.planets_index
+
     def get_random_free_location(
         self, galaxy_range=5, system_range=500, position_range=9
     ) -> PlanetLocation:

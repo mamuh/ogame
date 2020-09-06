@@ -63,13 +63,15 @@ def ColonyShip() -> Ship:
 
 @dataclass
 class Fleet(Entity):
+    owner_id: str = None
     light_fighter: Ship = field(default_factory=LightFighter)
     heavy_fighter: Ship = field(default_factory=HeavyFighter)
     colony_ship: Ship = field(default_factory=ColonyShip)
 
     @classmethod
-    def new(cls, planet_location: PlanetLocation):
+    def new(cls, owner_id: str, planet_location: PlanetLocation):
         return cls(
+            owner_id=owner_id,
             components={
                 FleetPositionComponent: FleetPositionComponent(
                     current_location=planet_location,
@@ -77,15 +79,8 @@ class Fleet(Entity):
                     travelling_to=None,
                     travelling_from=None,
                 )
-            }
+            },
         )
 
     def get_ships(self) -> List[Ship]:
-        return [self.light_fighter, self.heavy_fighter]
-
-
-ships_index = {
-    "light_fighter": LightFighter,
-    "heavy_fighter": HeavyFighter,
-    "colony_ship": ColonyShip,
-}
+        return [self.light_fighter, self.heavy_fighter, self.colony_ship]
