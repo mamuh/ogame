@@ -5,7 +5,6 @@ from game_backend.entities.entities import GameState
 from game_backend.components import (
     FleetPositionComponent,
     ShipComponent,
-    PlanetPositionComponent,
     PlanetComponent,
 )
 from game_backend.entities.ships import Fleet
@@ -16,6 +15,7 @@ from game_backend.resources import (
     sufficient_funds,
     subtract_cost,
 )
+from game_backend.game_structs import PlanetLocation
 
 
 VALID_MISSIONS = ["TRANSPORT", "RETURN", "COLONIZE"]
@@ -73,7 +73,7 @@ class MissionSystem:
             )
             fleet_pos_comp.cargo = empty_resources()
 
-            fleet_pos_comp.current_planet_id = fleet_pos_comp.travelling_to
+            fleet_pos_comp.current_location = fleet_pos_comp.travelling_to
             fleet_pos_comp.in_transit = False
             fleet_pos_comp.travelling_to = (
                 fleet_pos_comp.travelling_from
@@ -94,25 +94,15 @@ class MissionSystem:
 
         fleet_speed = min([ship.components[ShipComponent].speed for ship in ships])
 
-        galaxy_from = planet_from.components[PlanetPositionComponent].galaxy
-        system_from = planet_from.components[PlanetPositionComponent].solar_system
-        position_from = planet_from.components[PlanetPositionComponent].position
+        location_from = planet_from.components[PlanetComponent].location
+        location_to = planet_to.components[PlanetComponent].location
 
-        galaxy_to = planet_to.components[PlanetPositionComponent].galaxy
-        system_to = planet_to.components[PlanetPositionComponent].solar_system
-        position_to = planet_to.components[PlanetPositionComponent].position
-
-        total_distance = (
-            abs(galaxy_to - galaxy_from) * 10000
-            + abs(system_to - system_from) * 1000
-            + abs(position_to - position_from) * 100
-        )
-
+        total_distance = location_from.distance_from(location_to)
         travelling_time = total_distance / fleet_speed
 
         return travelling_time
 
-    def get_planet_fleet(self, player_id: str, planet_id: str) -> Fleet:
+    def get_planet_fleet(self, player_id: str, planet_id: PlanetLocation) -> Fleet:
         """
         Returns None if no fleet was found at this planet
         """
@@ -123,7 +113,7 @@ class MissionSystem:
 
         for fleet in player.fleets:
             fleet_comp = fleet.components[FleetPositionComponent]
-            if not fleet_comp.in_transit and fleet_comp.current_planet_id == planet_id:
+            if not fleet_comp.in_transit and fleet_comp.current_location == planet_id:
                 # There should only be one per planet so we can return it...
                 return fleet
         # if nothing was found, will return None
@@ -150,7 +140,7 @@ class MissionSystem:
             destination_id in game_state.world.planets
         ), f"Cannot find planet_id {destination_id}"
 
-        planet_from = game_state.world.planets[fleet_comp.current_planet_id]
+        planet_from = game_state.world.planets[fleet_comp.current_location]
         planet_comp = planet_from.components[PlanetComponent]
         if not sufficient_funds(cargo, planet_comp.resources):
             raise MissionException("Insufficient resources on planet")
@@ -159,13 +149,13 @@ class MissionSystem:
         fleet_comp.mission = mission
         fleet_comp.cargo = cargo
         fleet_comp.in_transit = True
-        fleet_comp.travelling_from = fleet_comp.current_planet_id
+        fleet_comp.travelling_from = fleet_comp.current_location
         fleet_comp.travelling_to = destination_id
         fleet_comp.travel_time_total = self.compute_travelling_time(
             game_state, fleet, fleet_comp.travelling_from, destination_id
         )
         fleet_comp.travel_time_left = fleet_comp.travel_time_total
-        fleet_comp.current_planet_id = None
+        fleet_comp.current_location = None
 
 
 MissionSystem = MissionSystem()

@@ -11,10 +11,11 @@ from game_backend.components import (
     ShipComponent,
     FleetPositionComponent,
 )
+from game_backend.game_structs import PlanetLocation
 
 
 class ShipBuildingSystem:
-    def build_ship(player_id: str, planet_id: str, ship_id: str) -> bool:
+    def build_ship(player_id: str, planet_id: PlanetLocation, ship_id: str) -> bool:
         game_state: GameState = EntityCatalog.get_special("game_state")
 
         player = game_state.players[player_id]
@@ -29,7 +30,7 @@ class ShipBuildingSystem:
             fleet_position_comp = fleet.components[FleetPositionComponent]
             if (
                 not fleet_position_comp.in_transit
-                and fleet_position_comp.current_planet_id == planet_id
+                and fleet_position_comp.current_location == planet_id
             ):
                 planet_fleet = fleet
                 break

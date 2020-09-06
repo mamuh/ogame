@@ -3,35 +3,20 @@ from dataclasses import dataclass, astuple
 import random
 from typing import Dict, List
 
-from game_backend.components import PlanetComponent, PlanetPositionComponent
+from game_backend.components import PlanetComponent
 from game_backend.entities.entities import Planet
-
-
-@dataclass
-class PlanetLocation:
-    galaxy: int
-    system: int
-    position: int
-
-    def __hash__(self):
-        return hash((self.galaxy, self.system, self.position))
+from game_backend.game_structs import PlanetLocation
 
 
 class PositionSystem:
     def __init__(self):
         self.planets_index: Dict[PlanetLocation, str] = {}
-        self.player_planets: Dict[str, List[str]] = {}
+        self.player_planets: Dict[str, List[PlanetLocation]] = {}
 
-    def register_planet(self, planet_id: str, planet: Planet):
-        pos_comp = planet.components[PlanetPositionComponent]
+    def register_planet(self, planet_id: PlanetLocation, planet: Planet):
         planet_comp = planet.components[PlanetComponent]
-        location = PlanetLocation(
-            galaxy=pos_comp.galaxy,
-            system=pos_comp.solar_system,
-            position=pos_comp.position,
-        )
-        print(location)
-        print(self.planets_index)
+        location = planet_comp.location
+
         assert (
             location not in self.planets_index
         ), "Trying to register a planet at an already taken location"

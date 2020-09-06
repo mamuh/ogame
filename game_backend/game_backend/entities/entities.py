@@ -5,11 +5,11 @@ from game_backend.ecs.entity import Entity
 from game_backend.components import (
     PlanetComponent,
     PlayerComponent,
-    PlanetPositionComponent,
 )
 from game_backend.resources import Resources
 from game_backend.entities.buildings import Building, Buildings
 from game_backend.entities.ships import Fleet
+from game_backend.game_structs import PlanetLocation
 
 
 @dataclass
@@ -19,12 +19,10 @@ class Planet(Entity):
     @classmethod
     def new(
         cls,
-        planet_id: str,
+        planet_id: PlanetLocation,
         name: str,
         size: int,
-        position: int,
-        solar_system: int,
-        galaxy: int,
+        location: PlanetLocation,
         owner_id: str = None,
     ):
         # HACK
@@ -33,10 +31,7 @@ class Planet(Entity):
         planet = cls(
             components={
                 PlanetComponent: PlanetComponent(
-                    name=name, size=size, owner_id=owner_id
-                ),
-                PlanetPositionComponent: PlanetPositionComponent(
-                    galaxy=galaxy, solar_system=solar_system, position=position
+                    name=name, size=size, location=location, owner_id=owner_id
                 ),
             },
         )

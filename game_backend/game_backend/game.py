@@ -19,6 +19,7 @@ from game_backend.systems.mission_system import (
 from game_backend.entities.entities import GameState, Player, Planet
 from game_backend.entities.ships import Fleet
 from game_backend.resources import Resources
+from game_backend.game_structs import PlanetLocation
 
 
 @dataclass
@@ -45,12 +46,12 @@ class Game(Thread):
     def check_player_id(self, player_id: str):
         assert player_id in self.game_state.players, f"Unknown player id {player_id}"
 
-    def check_planet_id(self, planet_id: str):
+    def check_planet_id(self, planet_id: PlanetLocation):
         assert (
             planet_id in self.game_state.world.planets
         ), f"Unknown planet id {planet_id}"
 
-    def check_player_planet(self, player_id: str, planet_id: str):
+    def check_player_planet(self, player_id: str, planet_id: PlanetLocation):
         self.check_player_id(player_id)
         self.check_planet_id(planet_id)
         assert (
@@ -74,7 +75,7 @@ class Game(Thread):
         return fleets
 
     def action_upgrade_building(
-        self, player_id: str, planet_id: str, building_id: str
+        self, player_id: str, planet_id: PlanetLocation, building_id: str
     ) -> bool:
         self.check_player_planet(player_id, planet_id)
         return (
@@ -84,7 +85,7 @@ class Game(Thread):
         )
 
     def action_build_ship(
-        self, player_id: str, planet_id: str, ship_id: str
+        self, player_id: str, planet_id: PlanetLocation, ship_id: str
     ) -> ActionOutcome:
         self.check_player_planet(player_id, planet_id)
         result = ShipBuildingSystem.build_ship(player_id, planet_id, ship_id)
@@ -93,13 +94,13 @@ class Game(Thread):
     def action_send_mission(
         self,
         player_id: str,
-        planet_id: str,
+        planet_id: PlanetLocation,
         mission: str,
-        destination_id: str,
+        destination_id: PlanetLocation,
         cargo: Dict[Resources, float] = None,
     ) -> ActionOutcome:
         self.check_player_planet(player_id, planet_id)
-        self.check_planet_id(destination_id)
+        # self.check_planet_id(destination_id)
         assert mission in VALID_MISSIONS
 
         fleet = MissionSystem.get_planet_fleet(player_id, planet_id)
@@ -125,9 +126,7 @@ class Game(Thread):
             planet_id,
             planet_id,
             random.randint(170, 210),
-            free_location.position,
-            free_location.system,
-            free_location.galaxy,
+            location=free_location,
             owner_id=player_id,
         )
         self.game_state.world.planets[planet_id] = new_planet

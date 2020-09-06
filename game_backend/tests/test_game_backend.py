@@ -21,7 +21,8 @@ from game_backend.components import (
 )
 from game_backend.systems.position_system import PositionSystem
 from game_backend.systems.mission_system import MissionSystem
-import game_backend.entities
+
+from game_backend.game_structs import PlanetLocation
 
 
 @pytest.fixture(autouse=True, scope="function")
@@ -43,8 +44,8 @@ def test_initialise_gamestate():
     assert "max" in game_state.players
     assert game_state.players["max"].components[PlayerComponent].name == "Max"
 
-    assert "earth" in game_state.world.planets
-    earth = game_state.world.planets["earth"]
+    assert PlanetLocation(3, 1, 1) in game_state.world.planets
+    earth = game_state.world.planets[PlanetLocation(3, 1, 1)]
 
     assert earth.components[PlanetComponent].name == "Earth"
 
@@ -70,7 +71,7 @@ def test_serialise_gamestate():
 def test_ids():
     game_state = initialise_gamestate()
 
-    mine = game_state.world.planets["earth"].buildings["mine"]
+    mine = game_state.world.planets[PlanetLocation(3, 1, 1)].buildings["mine"]
 
     assert mine.components[ProducerComponent]._entity_id == mine.id
     assert mine.id in EntityCatalog.entities_index
@@ -83,20 +84,20 @@ def test_game_update():
     game.update(10)
 
     assert (
-        game.game_state.world.planets["earth"]
+        game.game_state.world.planets[PlanetLocation(3, 1, 1)]
         .components[PlanetComponent]
         .resources[Resources.Metal]
         == 10
     )
 
-    game_state.world.planets["earth"].buildings["mine"].components[
+    game_state.world.planets[PlanetLocation(3, 1, 1)].buildings["mine"].components[
         BuildingComponent
     ].level += 1
 
     game.update(10)
 
     assert (
-        game.game_state.world.planets["earth"]
+        game.game_state.world.planets[PlanetLocation(3, 1, 1)]
         .components[PlanetComponent]
         .resources[Resources.Metal]
         == 21
@@ -107,15 +108,21 @@ def test_upgrade_building():
     game_state = initialise_gamestate()
     game = Game(game_state)
 
-    upgrade_success = game.action_upgrade_building("max", "earth", "mine")
+    upgrade_success = game.action_upgrade_building(
+        "max", PlanetLocation(3, 1, 1), "mine"
+    )
 
     assert not upgrade_success
 
     game.update(110)
 
-    upgrade_success = game.action_upgrade_building("max", "earth", "mine")
+    upgrade_success = game.action_upgrade_building(
+        "max", PlanetLocation(3, 1, 1), "mine"
+    )
 
-    planet_component = game_state.world.planets["earth"].components[PlanetComponent]
+    planet_component = game_state.world.planets[PlanetLocation(3, 1, 1)].components[
+        PlanetComponent
+    ]
 
     assert upgrade_success
     assert planet_component.resources[Resources.Metal] == 100
@@ -127,7 +134,7 @@ def test_upgrade_building():
         assert "unkwnown planet" in str(excinfo.value).lower()
 
     with pytest.raises(AssertionError) as excinfo:
-        game.action_upgrade_building("ploup", "earth", "mine")
+        game.action_upgrade_building("ploup", PlanetLocation(3, 1, 1), "mine")
 
         assert "unknown player" in str(excinfo.value).lower()
 
@@ -158,17 +165,17 @@ def test_build_ship():
 
     game = Game(game_state)
 
-    outcome = game.action_build_ship("max", "earth", "light_fighter")
+    outcome = game.action_build_ship("max", PlanetLocation(3, 1, 1), "light_fighter")
 
     assert not outcome.success
 
     game.update(1000)
 
-    success = game.action_upgrade_building("max", "earth", "ship_yard")
+    success = game.action_upgrade_building("max", PlanetLocation(3, 1, 1), "ship_yard")
 
     assert success
 
-    outcome = game.action_build_ship("max", "earth", "light_fighter")
+    outcome = game.action_build_ship("max", PlanetLocation(3, 1, 1), "light_fighter")
 
     assert outcome.success
 
@@ -191,18 +198,21 @@ def test_fleet_transport():
     fleet = game_state.players["max"].fleets[0]
     fleet_comp = fleet.components[FleetPositionComponent]
     MissionSystem.order_mission(
-        fleet, "TRANSPORT", "mars", {Resources.Metal: 2, Resources.Oil: 0.5},
+        fleet,
+        "TRANSPORT",
+        PlanetLocation(4, 1, 1),
+        {Resources.Metal: 2, Resources.Oil: 0.5},
     )
 
     game.update(5)
 
-    assert fleet_comp.travelling_to == "mars"
+    assert fleet_comp.travelling_to == PlanetLocation(4, 1, 1)
     assert fleet_comp.cargo[Resources.Metal] == 2
 
-    game.update(10)
+    game.update(10),
 
     assert fleet_comp.mission == "RETURN"
-    assert fleet_comp.travelling_to == "earth"
+    assert fleet_comp.travelling_to == PlanetLocation(3, 1, 1)
     assert fleet_comp.cargo[Resources.Metal] == 0
 
 
@@ -214,7 +224,11 @@ def test_fleet_transport_from_game():
     game.update(100)
 
     game.action_send_mission(
-        "max", "earth", "TRANSPORT", "mars", {Resources.Metal: 2, Resources.Oil: 0.5}
+        "max",
+        PlanetLocation(3, 1, 1),
+        "TRANSPORT",
+        PlanetLocation(4, 1, 1),
+        {Resources.Metal: 2, Resources.Oil: 0.5},
     )
 
     game.update(5)
@@ -223,11 +237,11 @@ def test_fleet_transport_from_game():
 
     fleet_comp = fleets[0].components[FleetPositionComponent]
 
-    assert fleet_comp.travelling_to == "mars"
+    assert fleet_comp.travelling_to == PlanetLocation(4, 1, 1)
     assert fleet_comp.cargo[Resources.Metal] == 2
 
     game.update(10)
 
     assert fleet_comp.mission == "RETURN"
-    assert fleet_comp.travelling_to == "earth"
+    assert fleet_comp.travelling_to == PlanetLocation(3, 1, 1)
     assert fleet_comp.cargo[Resources.Metal] == 0

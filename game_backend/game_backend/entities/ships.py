@@ -9,6 +9,7 @@ from game_backend.components import (
     FleetPositionComponent,
 )
 from game_backend.resources import Resources
+from game_backend.game_structs import PlanetLocation
 
 
 @dataclass
@@ -67,11 +68,11 @@ class Fleet(Entity):
     colony_ship: Ship = field(default_factory=ColonyShip)
 
     @classmethod
-    def new(cls, planet_id: str):
+    def new(cls, planet_location: PlanetLocation):
         return cls(
             components={
                 FleetPositionComponent: FleetPositionComponent(
-                    current_planet_id=planet_id,
+                    current_location=planet_location,
                     in_transit=False,
                     travelling_to=None,
                     travelling_from=None,

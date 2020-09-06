@@ -6,6 +6,7 @@ from dataclasses_jsonschema import JsonSchemaMixin
 
 from game_backend.ecs.component import Component
 from game_backend.resources import Resources, empty_resources
+from game_backend.game_structs import PlanetLocation
 
 
 @dataclass
@@ -48,10 +49,10 @@ class CombatComponent(Component, JsonSchemaMixin):
 
 @dataclass
 class FleetPositionComponent(Component, JsonSchemaMixin):
-    current_planet_id: str
+    current_location: PlanetLocation
     in_transit: bool
-    travelling_to: str
-    travelling_from: str
+    travelling_to: PlanetLocation
+    travelling_from: PlanetLocation
     cargo: Dict[Resources, float] = field(default_factory=empty_resources)
     travel_time_total: float = None
     travel_time_left: float = None
@@ -72,16 +73,10 @@ class StorageComponent(Component, JsonSchemaMixin):
 
 
 @dataclass
-class PlanetPositionComponent(Component, JsonSchemaMixin):
-    galaxy: int
-    solar_system: int
-    position: int
-
-
-@dataclass
 class PlanetComponent(Component, JsonSchemaMixin):
     name: str
     size: int
+    location: PlanetLocation
     owner_id: str
     resources: Dict[Resources, float] = field(
         default_factory=lambda: {resource: 0.0 for resource in Resources}
