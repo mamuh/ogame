@@ -6,7 +6,7 @@ from flask import Flask, request
 from game_backend.game import Game
 from game_backend.init_game import initialise_gamestate, init_state_complex
 from game_backend.resources import Resources
-
+from game_backend.game_structs import PlanetLocation
 
 app = Flask(__name__)
 
@@ -53,14 +53,22 @@ def get_player_fleets(player_id: str):
     methods=["POST"],
 )
 def upgrade_building(player_id: str, planet_id: str, building_id: str):
-    return str(game_thread.action_upgrade_building(player_id, planet_id, building_id))
+    return str(
+        game_thread.action_upgrade_building(
+            player_id, PlanetLocation.from_str(planet_id), building_id
+        )
+    )
 
 
 @app.route(
     "/player/<player_id>/actions/build_ship/<planet_id>/<ship_id>", methods=["POST"],
 )
 def build_ship(player_id: str, planet_id: str, ship_id: str):
-    return str(game_thread.action_build_ship(player_id, planet_id, ship_id))
+    return str(
+        game_thread.action_build_ship(
+            player_id, PlanetLocation.from_str(planet_id), ship_id
+        )
+    )
 
 
 @app.route(
@@ -77,7 +85,11 @@ def send_mission(player_id: str, planet_id: str, mission: str):
     else:
         cargo = None
     action_outcome = game_thread.action_send_mission(
-        player_id, planet_id, mission, destination_id, cargo
+        player_id,
+        PlanetLocation.from_str(planet_id),
+        mission,
+        PlanetLocation.from_str(destination_id),
+        cargo,
     )
     return action_outcome.to_json()
 

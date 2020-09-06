@@ -16,9 +16,9 @@ def initialise_gamestate() -> GameState:
     game_state = GameState(
         world=World(
             planets={
-                PlanetLocation(3, 1, 1): Planet.new(
+                PlanetLocation(1, 1, 3): Planet.new(
                     name="Earth",
-                    planet_id=PlanetLocation(3, 1, 1),
+                    planet_id=PlanetLocation(1, 1, 3),
                     size=16,
                     location=PlanetLocation(position=4, system=1, galaxy=1),
                     owner_id="max",
@@ -39,16 +39,16 @@ def init_state_complex() -> GameState:
     game_state = GameState(
         world=World(
             planets={
-                PlanetLocation(3, 1, 1): Planet.new(
+                PlanetLocation(1, 1, 3): Planet.new(
                     name="Earth",
-                    planet_id=PlanetLocation(3, 1, 1),
+                    planet_id=PlanetLocation(1, 1, 3),
                     size=250,
                     location=PlanetLocation(position=3, system=1, galaxy=1),
                     owner_id="max",
                 ),
-                PlanetLocation(4, 1, 1): Planet.new(
+                PlanetLocation(1, 1, 4): Planet.new(
                     name="Mars",
-                    planet_id=PlanetLocation(4, 1, 1),
+                    planet_id=PlanetLocation(1, 1, 4),
                     size=200,
                     location=PlanetLocation(position=4, system=1, galaxy=1),
                     owner_id="max",
@@ -57,9 +57,9 @@ def init_state_complex() -> GameState:
         ),
         players={"max": Player.new(id="max", name="Max")},
     )
-    earth_fleet = Fleet.new(PlanetLocation(3, 1, 1))
+    earth_fleet = Fleet.new(PlanetLocation(1, 1, 3))
     earth_fleet.light_fighter.components[ShipComponent].number = 10
-    mars_fleet = Fleet.new(PlanetLocation(4, 1, 1))
+    mars_fleet = Fleet.new(PlanetLocation(1, 1, 4))
     mars_fleet.heavy_fighter.components[ShipComponent].number = 5
     game_state.players["max"].fleets = [earth_fleet, mars_fleet]
     return game_state
