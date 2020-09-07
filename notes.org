@@ -2,7 +2,8 @@
 
 * Saturday 2020-09-05
 ** todos
-*** PROJ Build fleet movement system
+*** DONE Build fleet movement system
+CLOSED: [2020-09-07 Mon 22:16]
 *** TODO Build combat system
 *** TODO Add research and requirements
 
@@ -17,3 +18,8 @@ game_state
    -> planets
    -> fleets
 with links. Difficulty in maintaining the links
+
+* Monday 2020-09-07
+** todos
+*** TODO need system to split and merge fleets
+when sending a mission, the player should be able to select which ships will go

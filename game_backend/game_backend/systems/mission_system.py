@@ -42,6 +42,45 @@ class MissionSystem:
                 if fleet_pos_comp.travel_time_left <= 0:
                     self.execute_mission(game_state, fleet)
 
+            # Merge fleets on the same planet
+            planets_to_fleet = {}
+            for fleet in player.fleets:
+                fleet_comp = fleet.components[FleetPositionComponent]
+                if fleet_comp.in_transit:
+                    continue
+                planets_to_fleet.setdefault(fleet_comp.current_location, []).append(
+                    fleet
+                )
+            for fleets in planets_to_fleet.values():
+                if len(fleets) <= 1:
+                    continue
+                fleet_to_keep = fleets[0]
+                for fleet_removed in fleets[1:]:
+                    for ship_kept, ship_removed in zip(
+                        fleet_to_keep.ships, fleet_removed.ships
+                    ):
+                        ship_kept.components[
+                            ShipComponent
+                        ].number += ship_removed.components[ShipComponent].number
+                        ship_removed.components[ShipComponent].number = 0
+
+            # Delete empty fleets
+            fleets_to_delete = []
+            for i, fleet in enumerate(player.fleets):
+                to_delete = True
+                for ship in fleet.ships:
+                    if ship.components[ShipComponent].number > 0:
+                        to_delete = False
+                if to_delete:
+                    fleets_to_delete.append(i)
+            for i in fleets_to_delete[::-1]:
+                fleet = player.fleets.pop(i)
+                fleet.destruct()
+                for ship in fleet.ships:
+                    ship.destruct()
+                    del ship
+                del fleet
+
     def execute_mission(self, game_state: GameState, fleet: Fleet):
         fleet_pos_comp = fleet.components[FleetPositionComponent]
         if fleet_pos_comp.mission == "TRANSPORT":

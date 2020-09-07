@@ -87,6 +87,9 @@ class Entity(ABC):
     def deserialise(self, entity_dict: Dict):
         pass
 
+    def destruct(self):
+        EntityCatalog.deregister(self)
+
 
 class EntityCatalog:
     def __init__(self):
@@ -100,6 +103,11 @@ class EntityCatalog:
         self.entities_index[entity.id] = entity
         if entity.catalog_key is not None:
             self.special_index[entity.catalog_key] = entity
+
+    def deregister(self, entity: Entity):
+        del self.entities_index[entity.id]
+        if entity.catalog_key is not None:
+            del self.special_index[entity.catalog_key]
 
 
 EntityCatalog = EntityCatalog()
