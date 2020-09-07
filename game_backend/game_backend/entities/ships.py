@@ -56,7 +56,8 @@ def ColonyShip() -> Ship:
                 cost={Resources.Metal: 10, Resources.Cristal: 0},
                 speed=20,
                 cargo=500,
-            )
+            ),
+            CombatComponent: CombatComponent(hp=500, shield=50, damage=10),
         }
     )
 

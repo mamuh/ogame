@@ -53,13 +53,29 @@ def init_state_complex() -> GameState:
                     location=PlanetLocation(position=4, system=1, galaxy=1),
                     owner_id="max",
                 ),
+                PlanetLocation(1, 1, 5): Planet.new(
+                    name="Jupiter",
+                    planet_id=PlanetLocation(1, 1, 5),
+                    size=300,
+                    location=PlanetLocation(1, 1, 5),
+                    owner_id="bob",
+                ),
             }
         ),
-        players={"max": Player.new(id="max", name="Max")},
+        players={
+            "max": Player.new(id="max", name="Max"),
+            "bob": Player.new(id="bob", name="Bob"),
+        },
     )
     earth_fleet = Fleet.new("max", PlanetLocation(1, 1, 3))
     earth_fleet.light_fighter.components[ShipComponent].number = 10
     mars_fleet = Fleet.new("max", PlanetLocation(1, 1, 4))
     mars_fleet.heavy_fighter.components[ShipComponent].number = 5
     game_state.players["max"].fleets = [earth_fleet, mars_fleet]
+
+    jupiter_fleet = Fleet.new("bob", PlanetLocation(1, 1, 5))
+    jupiter_fleet.heavy_fighter.components[ShipComponent].number = 3
+
+    game_state.players["bob"].fleets = [jupiter_fleet]
+
     return game_state

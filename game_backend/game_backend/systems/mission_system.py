@@ -9,6 +9,7 @@ from game_backend.components import (
 )
 from game_backend.entities.ships import Fleet
 from game_backend.systems.position_system import PositionSystem
+from game_backend.systems.combat_system import CombatSystem
 from game_backend.resources import (
     Resources,
     add_resources,
@@ -19,7 +20,7 @@ from game_backend.resources import (
 from game_backend.game_structs import PlanetLocation
 
 
-VALID_MISSIONS = ["TRANSPORT", "RETURN", "COLONIZE"]
+VALID_MISSIONS = ["TRANSPORT", "RETURN", "COLONIZE", "ATTACK"]
 
 
 class MissionException(Exception):
@@ -148,6 +149,24 @@ class MissionSystem:
 
                 # Fleet stays at new planet
                 self.stop_fleet(fleet)
+        elif fleet_pos_comp.mission == "ATTACK":
+            defender_planet = game_state.world.planets[fleet_pos_comp.travelling_to]
+            defender_id = defender_planet.components[PlanetComponent].owner_id
+            # we find the defender fleet if there is one
+            defender_fleet = None
+            for defender_fleet in game_state.players[defender_id].fleets:
+                defender_fleet_comp = defender_fleet.components[FleetPositionComponent]
+                if (
+                    not defender_fleet_comp.in_transit
+                    and defender_fleet_comp.current_location
+                    == fleet_pos_comp.travelling_to
+                ):
+                    break
+            combat_log = CombatSystem.resolve_combat(
+                defender_planet, defender_fleet, fleet
+            )
+            if combat_log.attacker_victory:
+                self.finish_mission_and_return(fleet)
 
     def finish_mission_and_return(self, fleet: Fleet):
         fleet_comp = fleet.components[FleetPositionComponent]
@@ -227,6 +246,16 @@ class MissionSystem:
             assert (
                 destination_id in game_state.world.planets
             ), f"Cannot find planet id {destination_id}"
+
+        if mission == "ATTACK":
+            destination_owner_id = (
+                game_state.world.planets[destination_id]
+                .components[PlanetComponent]
+                .owner_id
+            )
+            assert (
+                fleet.owner_id != destination_owner_id
+            ), "Cannot attack your own planet"
 
         planet_from = game_state.world.planets[fleet_comp.current_location]
         planet_comp = planet_from.components[PlanetComponent]

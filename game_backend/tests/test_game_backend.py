@@ -275,14 +275,14 @@ def test_colonize_planet():
     game.action_build_ship("max", earth, "colony_ship")
 
     game.action_send_mission(
-        "max", earth, "COLONIZE", PlanetLocation(1, 1, 5), cargo={Resources.Metal: 5}
+        "max", earth, "COLONIZE", PlanetLocation(1, 1, 6), cargo={Resources.Metal: 5}
     )
 
-    game.update(15)
-    game.update(15)
+    game.update(25)
+    game.update(25)
 
-    assert len(game_state.world.planets) == 3
-    new_planet = game_state.world.planets[PlanetLocation(1, 1, 5)]
+    assert len(game_state.world.planets) == 4
+    new_planet = game_state.world.planets[PlanetLocation(1, 1, 6)]
     new_planet_comp = new_planet.components[PlanetComponent]
 
     assert new_planet_comp.resources[Resources.Metal] == 5
@@ -291,3 +291,23 @@ def test_colonize_planet():
 
     assert new_planet_comp.resources[Resources.Metal] == 20
     assert new_planet.buildings["metal_mine"].components[BuildingComponent].level == 0
+
+
+def test_combat():
+    game_state = init_state_complex()
+    game = Game(game_state)
+
+    earth = PlanetLocation(1, 1, 3)
+    jupiter = PlanetLocation(1, 1, 5)
+
+    game.update(100)
+
+    game.action_send_mission("max", earth, "ATTACK", jupiter)
+
+    game.update(20)
+    game.update(20)
+
+    attacking_fleet = game_state.players["max"].fleets[0]
+    assert len(game_state.players["bob"].fleets) == 0
+
+    assert attacking_fleet.ships[0].components[ShipComponent].number == 4

@@ -5,7 +5,7 @@ import requests
 server_url = "http://localhost:5000"
 
 SHIPS = ["light_fighter", "heavy_fighter", "colony_ship"]
-MISSIONS = ["RETURN", "TRANSPORT", "COLONIZE"]
+MISSIONS = ["RETURN", "TRANSPORT", "COLONIZE", "ATTACK"]
 
 
 def get_game_state() -> Dict:
