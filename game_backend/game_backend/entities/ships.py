@@ -23,7 +23,7 @@ def LightFighter() -> Ship:
             ShipComponent: ShipComponent(
                 name="LightFighter",
                 number=0,
-                cost={Resources.Metal: 30, Resources.Oil: 10,},
+                cost={Resources.Metal: 30, Resources.Cristal: 10,},
                 speed=10,
                 cargo=100,
             ),
@@ -38,7 +38,7 @@ def HeavyFighter() -> Ship:
             ShipComponent: ShipComponent(
                 name="HeavyFighter",
                 number=0,
-                cost={Resources.Metal: 100, Resources.Oil: 30},
+                cost={Resources.Metal: 100, Resources.Cristal: 30},
                 speed=10,
                 cargo=150,
             ),
@@ -53,7 +53,7 @@ def ColonyShip() -> Ship:
             ShipComponent: ShipComponent(
                 name="ColonyShip",
                 number=0,
-                cost={Resources.Metal: 10, Resources.Oil: 0},
+                cost={Resources.Metal: 10, Resources.Cristal: 0},
                 speed=20,
                 cargo=500,
             )
@@ -82,5 +82,6 @@ class Fleet(Entity):
             },
         )
 
-    def get_ships(self) -> List[Ship]:
+    @property
+    def ships(self) -> List[Ship]:
         return [self.light_fighter, self.heavy_fighter, self.colony_ship]

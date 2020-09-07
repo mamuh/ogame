@@ -6,7 +6,8 @@ from typing import Dict
 
 class Resources(Enum):
     Metal = "metal"
-    Oil = "oil"
+    Cristal = "cristal"
+    Deuterium = "deuterium"
 
 
 def sufficient_funds(

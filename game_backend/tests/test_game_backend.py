@@ -49,8 +49,8 @@ def test_initialise_gamestate():
 
     assert earth.components[PlanetComponent].name == "Earth"
 
-    mine = earth.buildings["mine"]
-    assert mine.components[BuildingComponent].name == "Mine"
+    metal_mine = earth.buildings["metal_mine"]
+    assert metal_mine.components[BuildingComponent].name == "MetalMine"
 
 
 def test_serialise_gamestate():
@@ -71,10 +71,12 @@ def test_serialise_gamestate():
 def test_ids():
     game_state = initialise_gamestate()
 
-    mine = game_state.world.planets[PlanetLocation(1, 1, 3)].buildings["mine"]
+    metal_mine = game_state.world.planets[PlanetLocation(1, 1, 3)].buildings[
+        "metal_mine"
+    ]
 
-    assert mine.components[ProducerComponent]._entity_id == mine.id
-    assert mine.id in EntityCatalog.entities_index
+    assert metal_mine.components[ProducerComponent]._entity_id == metal_mine.id
+    assert metal_mine.id in EntityCatalog.entities_index
 
 
 def test_game_update():
@@ -90,9 +92,9 @@ def test_game_update():
         == 10
     )
 
-    game_state.world.planets[PlanetLocation(1, 1, 3)].buildings["mine"].components[
-        BuildingComponent
-    ].level += 1
+    game_state.world.planets[PlanetLocation(1, 1, 3)].buildings[
+        "metal_mine"
+    ].components[BuildingComponent].level += 1
 
     game.update(10)
 
@@ -109,7 +111,7 @@ def test_upgrade_building():
     game = Game(game_state)
 
     upgrade_success = game.action_upgrade_building(
-        "max", PlanetLocation(1, 1, 3), "mine"
+        "max", PlanetLocation(1, 1, 3), "metal_mine"
     )
 
     assert not upgrade_success
@@ -117,7 +119,7 @@ def test_upgrade_building():
     game.update(110)
 
     upgrade_success = game.action_upgrade_building(
-        "max", PlanetLocation(1, 1, 3), "mine"
+        "max", PlanetLocation(1, 1, 3), "metal_mine"
     )
 
     planet_component = game_state.world.planets[PlanetLocation(1, 1, 3)].components[
@@ -126,15 +128,15 @@ def test_upgrade_building():
 
     assert upgrade_success
     assert planet_component.resources[Resources.Metal] == 100
-    assert planet_component.resources[Resources.Oil] == 55
+    assert planet_component.resources[Resources.Cristal] == 55
 
     with pytest.raises(AssertionError) as excinfo:
-        game.action_upgrade_building("max", "ploup", "mine")
+        game.action_upgrade_building("max", "ploup", "metal_mine")
 
         assert "unkwnown planet" in str(excinfo.value).lower()
 
     with pytest.raises(AssertionError) as excinfo:
-        game.action_upgrade_building("ploup", PlanetLocation(1, 1, 3), "mine")
+        game.action_upgrade_building("ploup", PlanetLocation(1, 1, 3), "metal_mine")
 
         assert "unknown player" in str(excinfo.value).lower()
 
@@ -201,7 +203,7 @@ def test_fleet_transport():
         fleet,
         "TRANSPORT",
         PlanetLocation(1, 1, 4),
-        {Resources.Metal: 2, Resources.Oil: 0.5},
+        {Resources.Metal: 2, Resources.Cristal: 0.5},
     )
 
     game.update(5)
@@ -236,7 +238,7 @@ def test_fleet_transport_from_game():
         PlanetLocation(1, 1, 3),
         "TRANSPORT",
         PlanetLocation(1, 1, 4),
-        {Resources.Metal: 2, Resources.Oil: 0.5},
+        {Resources.Metal: 2, Resources.Cristal: 0.5},
     )
 
     assert (
@@ -288,4 +290,4 @@ def test_colonize_planet():
     game.update(15)
 
     assert new_planet_comp.resources[Resources.Metal] == 20
-    assert new_planet.buildings["mine"].components[BuildingComponent].level == 0
+    assert new_planet.buildings["metal_mine"].components[BuildingComponent].level == 0

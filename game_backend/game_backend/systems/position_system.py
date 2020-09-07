@@ -35,7 +35,7 @@ class PositionSystem:
             for s in range(system_range)
             for p in range(position_range)
         )
-        taken_locations = set(astuple(loc) for loc in self.planets_index)
+        taken_locations = set(loc for loc in self.planets_index)
         free_locations = all_locations - taken_locations
         random_free_location = random.choice(list(free_locations))
 

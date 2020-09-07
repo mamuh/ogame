@@ -25,11 +25,11 @@ def server_is_running() -> bool:
     return response.status_code == 200
 
 
-def ask_for_options(options: List[str]):
+def ask_for_options(options: List[str], default=None):
     possible_choices = []
     for i, option in enumerate(options):
-        print(f"{i} - {option}")
-        possible_choices.append(str(i))
+        print(f"{i+1} - {option}")
+        possible_choices.append(str(i + 1))
 
     invalid_input = True
     user_input = None
@@ -37,9 +37,12 @@ def ask_for_options(options: List[str]):
         user_input = input()
         if user_input in possible_choices:
             invalid_input = False
+        elif user_input == "" and default is not None:
+            user_input = default + 1
+            invalid_input = False
         else:
             print("Invalid input. Try again.")
-    return options[int(user_input)]
+    return options[int(user_input) - 1]
 
 
 def get_player_data(player_id: str):
@@ -63,7 +66,9 @@ def display_game_state(player_data, player_id: str):
     player_planets = player_data["planets"]
     player_fleets = player_data["fleets"]
     print()
-    print("Your Planets")
+    print("-" * 40)
+    print("PLANETS")
+    print("-" * 40)
     for planet_id, planet in player_planets.items():
         planet_comp = planet["components"]["PlanetComponent"]
         print(planet_comp["name"])
@@ -80,7 +85,9 @@ def display_game_state(player_data, player_id: str):
         )
         print()
     print()
-    print("Your Fleets")
+    print("-" * 40)
+    print("FLEETS")
+    print("-" * 40)
     for fleet in player_fleets:
         fleet_comp = fleet["components"]["FleetPositionComponent"]
         in_transit = fleet_comp["in_transit"]
@@ -183,7 +190,7 @@ def run():
         player_data = get_player_data(player_id)
         display_game_state(player_data, player_id)
         choice = ask_for_options(
-            ["Refresh", "Upgrade Building", "Build Ship", "Send Mission"]
+            ["Refresh", "Upgrade Building", "Build Ship", "Send Mission"], default=0,
         )
 
         if choice == "Refresh":

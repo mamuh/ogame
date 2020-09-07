@@ -121,10 +121,10 @@ class Game(Thread):
             print("name taken")
             return False
         free_location = PositionSystem.get_random_free_location()
-        planet_id = f"planet-{free_location.galaxy}-{free_location.system}-{free_location.position}"
+        planet_name = f"planet-{free_location.galaxy}-{free_location.system}-{free_location.position}"
         new_planet = Planet.new(
-            planet_id,
-            planet_id,
+            free_location,
+            planet_name,
             random.randint(170, 210),
             location=free_location,
             owner_id=player_id,

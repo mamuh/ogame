@@ -28,14 +28,14 @@ class Building(Entity):
         )
 
 
-def Mine() -> Building:
+def MetalMine() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
                 production_rate={Resources.Metal: 1}, energy_consumption=5
             ),
             BuildingComponent: BuildingComponent(
-                name="Mine",
+                name="MetalMine",
                 base_cost={Resources.Metal: 10},
                 upgrade_cost_factor=1.1,
                 upgrade_prod_factor=1.1,
@@ -44,16 +44,32 @@ def Mine() -> Building:
     )
 
 
-def OilRig() -> Building:
+def CristalMine() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
-                production_rate={Resources.Oil: 0.5}, energy_consumption=6
+                production_rate={Resources.Cristal: 0.5}, energy_consumption=6
             ),
             BuildingComponent: BuildingComponent(
-                name="OilRig",
+                name="CristalMine",
                 base_cost={Resources.Metal: 20},
                 upgrade_cost_factor=1.2,
+                upgrade_prod_factor=1.1,
+            ),
+        }
+    )
+
+
+def DeuteriumSynthesizer() -> Building:
+    return Building(
+        components={
+            ProducerComponent: ProducerComponent(
+                production_rate={Resources.Deuterium: 1}, energy_consumption=7
+            ),
+            BuildingComponent: BuildingComponent(
+                name="DeuteriumSynthesizer",
+                base_cost={Resources.Metal: 20, Resources.Cristal: 20},
+                upgrade_cost_factor=1.3,
                 upgrade_prod_factor=1.1,
             ),
         }
@@ -64,7 +80,7 @@ def SolarPlant() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
-                production_rate={}, energy_consumption=0, energy_production=15
+                production_rate={}, energy_consumption=0, energy_production=20
             ),
             BuildingComponent: BuildingComponent(
                 name="SolarPlant",
@@ -89,13 +105,32 @@ def MetalHangar() -> Building:
     )
 
 
-def OilTank() -> Building:
+def CristalHangar() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="OilTank", base_cost={Resources.Metal: 8}, upgrade_cost_factor=1.3,
+                name="CristalHangar",
+                base_cost={Resources.Metal: 8},
+                upgrade_cost_factor=1.3,
             ),
-            StorageComponent: StorageComponent(resources_storage={Resources.Oil: 2}),
+            StorageComponent: StorageComponent(
+                resources_storage={Resources.Cristal: 2}
+            ),
+        }
+    )
+
+
+def DeuteriumTank() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="DeuteriumTank",
+                base_cost={Resources.Metal: 8, Resources.Cristal: 10},
+                upgrade_cost_factor=1.3,
+            ),
+            StorageComponent: StorageComponent(
+                resources_storage={Resources.Deuterium: 2}
+            ),
         }
     )
 
@@ -127,11 +162,13 @@ def MissileTurret() -> Building:
 
 def Buildings() -> Dict[str, Building]:
     return {
-        "mine": Mine(),
-        "oil_rig": OilRig(),
+        "metal_mine": MetalMine(),
+        "cristal_mine": CristalMine(),
+        "deuterium_synthesizer": DeuteriumSynthesizer(),
         "solar_plant": SolarPlant(),
         "metal_hangar": MetalHangar(),
-        "oil_tank": OilTank(),
+        "cristal_hangar": CristalHangar(),
+        "deuterium_tank": DeuteriumTank(),
         "ship_yard": ShipYard(),
         "missile_turret": MissileTurret(),
     }

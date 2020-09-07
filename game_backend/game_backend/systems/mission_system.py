@@ -139,7 +139,7 @@ class MissionSystem:
         to_id: PlanetLocation,
     ):
         fleet_comp = fleet.components[FleetPositionComponent]
-        ships = fleet.get_ships()
+        ships = fleet.ships
 
         fleet_speed = min([ship.components[ShipComponent].speed for ship in ships])
 
