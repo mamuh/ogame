@@ -72,17 +72,26 @@ def display_game_state(player_data, player_id: str):
     for planet_id, planet in player_planets.items():
         planet_comp = planet["components"]["PlanetComponent"]
         print(planet_comp["name"])
-        print("Resources:")
-        print(planet_comp["resources"])
+        resources_string = []
+        for res in planet_comp["resources"]:
+            resources_string.append(
+                f"{res}: {int(planet_comp['resources'][res])}/{int(planet_comp['resources_storage'][res])}"
+            )
+        print("Resources:", " - ".join(resources_string))
+
         print("Buildings")
-        print(
-            {
-                building["components"]["BuildingComponent"]["name"]: building[
-                    "components"
-                ]["BuildingComponent"]["level"]
-                for building_id, building in planet["buildings"].items()
-            }
-        )
+        for building_id, building in planet["buildings"].items():
+            building_comp = building["components"]["BuildingComponent"]
+            name = building_comp["name"]
+            level = building_comp["level"]
+            upgrade_cost = building_comp["upgrade_cost"]
+            upgrade_cost_string = ", ".join(
+                [f"{res}: {int(cost)}" for res, cost in upgrade_cost.items()]
+            )
+            building_string = (
+                f"  - {name:20} - level {level} - Upgrade cost: {upgrade_cost_string}"
+            )
+            print(building_string)
         print()
     print()
     print("-" * 40)
