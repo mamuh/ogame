@@ -129,7 +129,7 @@ class Game(Thread):
             location=free_location,
             owner_id=player_id,
         )
-        self.game_state.world.planets[planet_id] = new_planet
+        self.game_state.world.planets[free_location] = new_planet
         self.game_state.players[player_id] = Player.new(id=player_id, name=player_name)
         return True
 
