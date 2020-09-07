@@ -89,6 +89,8 @@ class Entity(ABC):
 
     def destruct(self):
         EntityCatalog.deregister(self)
+        for component in self.components.values():
+            del component
 
 
 class EntityCatalog:
