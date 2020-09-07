@@ -4,6 +4,9 @@ import requests
 
 server_url = "http://localhost:5000"
 
+SHIPS = ["light_fighter", "heavy_fighter", "colony_ship"]
+MISSIONS = ["RETURN", "TRANSPORT", "COLONIZE"]
+
 
 def get_game_state() -> Dict:
     game_state = requests.get(f"{server_url}/get_state")
@@ -77,9 +80,24 @@ def display_game_state(player_data, player_id: str):
         )
         print()
     print()
-    print("Your Fleet")
+    print("Your Fleets")
     for fleet in player_fleets:
-        print(fleet)
+        fleet_comp = fleet["components"]["FleetPositionComponent"]
+        in_transit = fleet_comp["in_transit"]
+        if not in_transit:
+            current_location = fleet_comp["current_location"]
+            print(f"Location: {current_location}")
+        else:
+            travelling_from = fleet_comp["travelling_from"]
+            travelling_to = fleet_comp["travelling_to"]
+            print(
+                f"Location: Deep Space. Travelling from: {travelling_from} to: {travelling_to}"
+            )
+        for ship in SHIPS:
+            ship_number = fleet[ship]["components"]["ShipComponent"]["number"]
+            if ship_number > 0:
+                print(f"- {ship}: {ship_number}")
+    print()
 
 
 def upgrade_building(building_id: str, planet_id: str, player_id: str) -> bool:
@@ -87,6 +105,52 @@ def upgrade_building(building_id: str, planet_id: str, player_id: str) -> bool:
         f"{server_url}/player/{player_id}/actions/upgrade_building/{planet_id}/{building_id}"
     )
     return response.text == "True"
+
+
+def build_ship(player_id: str, planet_id: str, ship_id: str) -> bool:
+    response = requests.post(
+        f"{server_url}/player/{player_id}/actions/build_ship/{planet_id}/{ship_id}"
+    )
+    return response.text == "True"
+
+
+def send_mission(
+    player_id: str,
+    planet_id: str,
+    mission: str,
+    destination_id: str,
+    cargo: Dict[str, str],
+) -> bool:
+    response = requests.post(
+        f"{server_url}/player/{player_id}/actions/send_mission/{planet_id}/{mission}",
+        json={"destination_id": destination_id, "cargo": cargo},
+    )
+    print(response)
+
+
+def choose_planet(player_data):
+    print("Pick a planet:")
+    planet_id = ask_for_options(list(player_data["planets"].keys()))
+    planet = player_data["planets"][planet_id]
+    return planet_id, planet
+
+
+def choose_building(planet):
+    print("Pick a building:")
+    building_id = ask_for_options(list(planet["buildings"].keys()))
+    return building_id
+
+
+def choose_ship():
+    print("Pick a ship:")
+    ship_id = ask_for_options(SHIPS)
+    return ship_id
+
+
+def choose_mission():
+    print("Pick a mission:")
+    mission = ask_for_options(MISSIONS)
+    return mission
 
 
 def run():
@@ -118,17 +182,32 @@ def run():
     while True:
         player_data = get_player_data(player_id)
         display_game_state(player_data, player_id)
-        choice = ask_for_options(["Refresh", "Upgrade Building"])
+        choice = ask_for_options(
+            ["Refresh", "Upgrade Building", "Build Ship", "Send Mission"]
+        )
 
         if choice == "Refresh":
             continue
         elif choice == "Upgrade Building":
-            print("Planet:")
-            planet_id = ask_for_options(list(player_data["planets"].keys()))
-            planet = player_data["planets"][planet_id]
-            print("Building to upgrade:")
-            building_id = ask_for_options(list(planet["buildings"].keys()))
+            planet_id, planet = choose_planet(player_data)
+            building_id = choose_building(planet)
             upgrade_building(building_id, planet_id, player_id)
+        elif choice == "Build Ship":
+            planet_id, planet = choose_planet(player_data)
+            ship_id = choose_ship()
+            build_ship(player_id, planet_id, ship_id)
+        elif choice == "Send Mission":
+            planet_id, planet = choose_planet(player_data)
+            mission = choose_mission()
+            print("Enter destination")
+            destination_id = input()
+            planet_resources = planet["components"]["PlanetComponent"]["resources"]
+            cargo = {}
+            for resource in planet_resources:
+                print(f"{resource} amount:")
+                cargo[resource] = float(input())
+
+            send_mission(player_id, planet_id, mission, destination_id, cargo)
 
 
 if __name__ == "__main__":
