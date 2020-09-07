@@ -194,7 +194,7 @@ class MissionSystem:
         if not sufficient_funds(cargo, planet_comp.resources):
             raise MissionException("Insufficient resources on planet")
 
-        planet_from.resources = subtract_cost(cargo, planet_comp.resources)
+        planet_comp.resources = subtract_cost(cargo, planet_comp.resources)
         fleet_comp.mission = mission
         fleet_comp.cargo = cargo
         fleet_comp.in_transit = True

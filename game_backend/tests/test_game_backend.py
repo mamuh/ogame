@@ -223,6 +223,14 @@ def test_fleet_transport_from_game():
 
     game.update(100)
 
+    earth = PlanetLocation(1, 1, 3)
+    assert (
+        game_state.world.planets[earth]
+        .components[PlanetComponent]
+        .resources[Resources.Metal]
+        == 100
+    )
+
     game.action_send_mission(
         "max",
         PlanetLocation(1, 1, 3),
@@ -231,6 +239,12 @@ def test_fleet_transport_from_game():
         {Resources.Metal: 2, Resources.Oil: 0.5},
     )
 
+    assert (
+        game_state.world.planets[earth]
+        .components[PlanetComponent]
+        .resources[Resources.Metal]
+        == 98
+    )
     game.update(5)
 
     fleets = game.get_player_fleets("max")
