@@ -10,6 +10,9 @@ class Resources(Enum):
     Deuterium = "deuterium"
 
 
+RESOURCES_PRIORITY = (Resources.Deuterium, Resources.Cristal, Resources.Metal)
+
+
 def sufficient_funds(
     cost: Dict[Resources, float], available: Dict[Resources, float]
 ) -> bool:

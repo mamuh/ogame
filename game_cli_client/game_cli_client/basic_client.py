@@ -98,7 +98,7 @@ def display_game_state(player_data, player_id: str):
     print("FLEETS")
     print("-" * 40)
     for fleet in player_fleets:
-        fleet_comp = fleet["components"]["FleetPositionComponent"]
+        fleet_comp = fleet["components"]["FleetComponent"]
         in_transit = fleet_comp["in_transit"]
         if not in_transit:
             current_location = fleet_comp["current_location"]

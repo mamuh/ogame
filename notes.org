@@ -23,3 +23,9 @@ with links. Difficulty in maintaining the links
 ** todos
 *** TODO need system to split and merge fleets
 when sending a mission, the player should be able to select which ships will go
+
+
+* Tuesday 2020-09-08
+** todos
+*** TODO combat report and mission report in general need to be returned
+*** TODO take into account fleet cargo capacity

@@ -9,7 +9,7 @@ from game_backend.ecs.entity import EntityCatalog
 from game_backend.entities.entities import Planet
 from game_backend.entities.ships import Fleet
 from game_backend.components import (
-    FleetPositionComponent,
+    FleetComponent,
     ShipComponent,
     CombatComponent,
     PlanetComponent,

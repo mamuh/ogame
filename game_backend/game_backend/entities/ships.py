@@ -6,7 +6,7 @@ from game_backend.ecs.entity import Entity
 from game_backend.components import (
     ShipComponent,
     CombatComponent,
-    FleetPositionComponent,
+    FleetComponent,
 )
 from game_backend.resources import Resources
 from game_backend.game_structs import PlanetLocation
@@ -74,7 +74,7 @@ class Fleet(Entity):
         return cls(
             owner_id=owner_id,
             components={
-                FleetPositionComponent: FleetPositionComponent(
+                FleetComponent: FleetComponent(
                     current_location=planet_location,
                     in_transit=False,
                     travelling_to=None,

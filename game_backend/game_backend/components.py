@@ -5,8 +5,10 @@ from typing import Dict, List
 from dataclasses_jsonschema import JsonSchemaMixin
 
 from game_backend.ecs.component import Component
-from game_backend.resources import Resources, empty_resources
+from game_backend.resources import Resources, empty_resources, add_resources
 from game_backend.game_structs import PlanetLocation
+
+UNIVERSE_SPEED = 10
 
 
 @dataclass
@@ -48,7 +50,7 @@ class CombatComponent(Component, JsonSchemaMixin):
 
 
 @dataclass
-class FleetPositionComponent(Component, JsonSchemaMixin):
+class FleetComponent(Component, JsonSchemaMixin):
     current_location: PlanetLocation
     in_transit: bool
     travelling_to: PlanetLocation
@@ -57,6 +59,15 @@ class FleetPositionComponent(Component, JsonSchemaMixin):
     travel_time_total: float = None
     travel_time_left: float = None
     mission: str = None
+
+    @property
+    def available_cargo(self) -> float:
+        fleet = self.entity
+        total_available = sum(
+            [ship.components[ShipComponent].cargo for ship in fleet.ships]
+        )
+        already_taken = sum(self.cargo.values())
+        return total_available - already_taken
 
 
 @dataclass
@@ -111,7 +122,7 @@ class PlanetComponent(Component, JsonSchemaMixin):
                 building_comp = building.components[BuildingComponent]
                 for resource, rate in prod_comp.production_rate.items():
                     produced_resources[resource.value] += (
-                        rate
+                        rate  # * UNIVERSE_SPEED * building_comp.level
                         * self.energy_ratio
                         * building_comp.upgrade_prod_factor ** building_comp.level
                     )

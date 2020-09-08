@@ -9,7 +9,7 @@ from game_backend.components import (
     BuildingComponent,
     PlanetComponent,
     ShipComponent,
-    FleetPositionComponent,
+    FleetComponent,
 )
 from game_backend.game_structs import PlanetLocation
 
@@ -27,7 +27,7 @@ class ShipBuildingSystem:
         # Finding the appropriate fleet
         planet_fleet = None
         for fleet in player.fleets:
-            fleet_position_comp = fleet.components[FleetPositionComponent]
+            fleet_position_comp = fleet.components[FleetComponent]
             if (
                 not fleet_position_comp.in_transit
                 and fleet_position_comp.current_location == planet_id

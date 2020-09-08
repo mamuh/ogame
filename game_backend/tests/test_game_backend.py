@@ -17,7 +17,7 @@ from game_backend.components import (
     PlanetComponent,
     BuildingComponent,
     ShipComponent,
-    FleetPositionComponent,
+    FleetComponent,
 )
 from game_backend.systems.position_system import PositionSystem
 from game_backend.systems.mission_system import MissionSystem
@@ -198,7 +198,7 @@ def test_fleet_transport():
 
     game.update(100)
     fleet = game_state.players["max"].fleets[0]
-    fleet_comp = fleet.components[FleetPositionComponent]
+    fleet_comp = fleet.components[FleetComponent]
     MissionSystem.order_mission(
         fleet,
         "TRANSPORT",
@@ -251,7 +251,7 @@ def test_fleet_transport_from_game():
 
     fleets = game.get_player_fleets("max")
 
-    fleet_comp = fleets[0].components[FleetPositionComponent]
+    fleet_comp = fleets[0].components[FleetComponent]
 
     assert fleet_comp.travelling_to == PlanetLocation(1, 1, 4)
     assert fleet_comp.cargo[Resources.Metal] == 2
@@ -304,10 +304,33 @@ def test_combat():
 
     game.action_send_mission("max", earth, "ATTACK", jupiter)
 
-    game.update(20)
-    game.update(20)
-
     attacking_fleet = game_state.players["max"].fleets[0]
-    assert len(game_state.players["bob"].fleets) == 0
 
+    assert attacking_fleet.ships[0].components[ShipComponent].number == 10
+    assert attacking_fleet.components[FleetComponent].cargo == {
+        Resources.Metal: 0,
+        Resources.Cristal: 0,
+        Resources.Deuterium: 0,
+    }
+
+    game.update(19)
+
+    assert game_state.world.planets[jupiter].components[PlanetComponent].resources == {
+        Resources.Metal: 100,
+        Resources.Cristal: 50,
+        Resources.Deuterium: 100,
+    }
+    game.update(1)
+    assert game_state.world.planets[jupiter].components[PlanetComponent].resources == {
+        Resources.Metal: 0,
+        Resources.Cristal: 0,
+        Resources.Deuterium: 0,
+    }
+    assert len(game_state.players["bob"].fleets) == 0
     assert attacking_fleet.ships[0].components[ShipComponent].number == 4
+    assert attacking_fleet.components[FleetComponent].cargo == {
+        Resources.Metal: 100,
+        Resources.Cristal: 50,
+        Resources.Deuterium: 100,
+    }
+    game.update(20)
