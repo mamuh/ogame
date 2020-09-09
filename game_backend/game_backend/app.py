@@ -48,6 +48,18 @@ def get_player_fleets(player_id: str):
     )
 
 
+@app.route("/player/<player_id>/get/research")
+def get_player_research(player_id: str):
+    return json.dumps(
+        {
+            research_name: research.serialise()
+            for research_name, research in game_thread.get_player_research(
+                player_id
+            ).items()
+        }
+    )
+
+
 @app.route(
     "/player/<player_id>/actions/upgrade_building/<planet_id>/<building_id>",
     methods=["POST"],
@@ -56,6 +68,18 @@ def upgrade_building(player_id: str, planet_id: str, building_id: str):
     return str(
         game_thread.action_upgrade_building(
             player_id, PlanetLocation.from_str(planet_id), building_id
+        )
+    )
+
+
+@app.route(
+    "/player/<player_id>/actions/upgrade_research/<planet_id>/<research_id>",
+    methods=["POST"],
+)
+def upgrade_research(player_id: str, planet_id: str, research_id: str):
+    return str(
+        game_thread.action_upgrade_research(
+            player_id, PlanetLocation.from_str(planet_id), research_id
         )
     )
 

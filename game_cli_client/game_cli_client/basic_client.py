@@ -49,6 +49,7 @@ def get_player_data(player_id: str):
     return {
         "planets": get_player_planets(player_id),
         "fleets": get_player_fleets(player_id),
+        "research": get_player_research(player_id),
     }
 
 
@@ -59,6 +60,11 @@ def get_player_planets(player_id: str) -> Dict[str, Dict]:
 
 def get_player_fleets(player_id: str) -> List[Dict]:
     response = requests.get(f"{server_url}/player/{player_id}/get/fleets")
+    return response.json()
+
+
+def get_player_research(player_id: str) -> Dict:
+    response = requests.get(f"{server_url}/player/{player_id}/get/research")
     return response.json()
 
 
@@ -113,12 +119,27 @@ def display_game_state(player_data, player_id: str):
             ship_number = fleet[ship]["components"]["ShipComponent"]["number"]
             if ship_number > 0:
                 print(f"- {ship}: {ship_number}")
+
+    print("-" * 40)
+    print("RESEARCH")
+    print("-" * 40)
+    for research_name, research in player_data["research"].items():
+        level = research["components"]["ResearchComponent"]["level"]
+        if level > 0:
+            print(f"- {research_name}: {level}")
     print()
 
 
 def upgrade_building(building_id: str, planet_id: str, player_id: str) -> bool:
     response = requests.post(
         f"{server_url}/player/{player_id}/actions/upgrade_building/{planet_id}/{building_id}"
+    )
+    return response.text == "True"
+
+
+def upgrade_research(research_id: str, planet_id: str, player_id: str) -> bool:
+    response = requests.post(
+        f"{server_url}/player/{player_id}/actions/upgrade_research/{planet_id}/{research_id}"
     )
     return response.text == "True"
 
@@ -155,6 +176,12 @@ def choose_building(planet):
     print("Pick a building:")
     building_id = ask_for_options(list(planet["buildings"].keys()))
     return building_id
+
+
+def choose_research(player_data):
+    print("Pick a research:")
+    research_id = ask_for_options(list(player_data["research"].keys()))
+    return research_id
 
 
 def choose_ship():
@@ -199,7 +226,14 @@ def run():
         player_data = get_player_data(player_id)
         display_game_state(player_data, player_id)
         choice = ask_for_options(
-            ["Refresh", "Upgrade Building", "Build Ship", "Send Mission"], default=0,
+            [
+                "Refresh",
+                "Upgrade Building",
+                "Upgrade Research",
+                "Build Ship",
+                "Send Mission",
+            ],
+            default=0,
         )
 
         if choice == "Refresh":
@@ -208,6 +242,10 @@ def run():
             planet_id, planet = choose_planet(player_data)
             building_id = choose_building(planet)
             upgrade_building(building_id, planet_id, player_id)
+        elif choice == "Upgrade Research":
+            planet_id, planet = choose_planet(player_data)
+            research_id = choose_research(player_data)
+            upgrade_research(research_id, planet_id, player_id)
         elif choice == "Build Ship":
             planet_id, planet = choose_planet(player_data)
             ship_id = choose_ship()

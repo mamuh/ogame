@@ -17,6 +17,7 @@ from game_backend.systems.mission_system import (
     VALID_MISSIONS,
 )
 from game_backend.systems.upgrade_system import UpgradeSystem
+from game_backend.ecs.entity import Entity
 from game_backend.entities.entities import GameState, Player, Planet
 from game_backend.entities.ships import Fleet
 from game_backend.resources import Resources
@@ -74,6 +75,11 @@ class Game(Thread):
         self.check_player_id(player_id)
         fleets = self.game_state.players[player_id].fleets
         return fleets
+
+    def get_player_research(self, player_id: str) -> Dict[str, Entity]:
+        self.check_player_id(player_id)
+        research = self.game_state.players[player_id].research
+        return research
 
     def action_upgrade_building(
         self, player_id: str, planet_id: PlanetLocation, building_id: str
