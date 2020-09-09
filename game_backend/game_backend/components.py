@@ -26,12 +26,6 @@ class BuildingComponent(Component, JsonSchemaMixin):
             for resource, resource_base_cost in self.base_cost.items()
         }
 
-    def can_upgrade(self, resources: Dict[Resources, float]) -> bool:
-        for resource_str, cost in self.upgrade_cost.items():
-            if cost > resources[Resources(resource_str)]:
-                return False
-        return True
-
 
 @dataclass
 class ShipComponent(Component, JsonSchemaMixin):
@@ -40,6 +34,20 @@ class ShipComponent(Component, JsonSchemaMixin):
     cost: Dict[Resources, float]
     speed: float
     cargo: float
+
+
+@dataclass
+class ResearchComponent(Component, JsonSchemaMixin):
+    name: str
+    level: int
+    cost: Dict[Resources, float]
+    upgrade_cost_factor: float
+
+
+@dataclass
+class RequirementsComponent(Component, JsonSchemaMixin):
+    building: Dict[str, int]
+    research: Dict[str, int]
 
 
 @dataclass
@@ -142,28 +150,6 @@ class PlanetComponent(Component, JsonSchemaMixin):
                         * stor_comp.upgrade_storage_factor ** building_comp.level
                     )
         return resources_storage_dict
-
-    def upgrade_building(self, building_name: str) -> bool:
-        """
-        Returns a boolean indicating upgrade success or failure
-        """
-        planet = self.entity
-        assert (
-            building_name in self.entity.buildings
-        ), f"Invalid building name: {building_name}"
-        building_comp = self.entity.buildings[building_name].components[
-            BuildingComponent
-        ]
-
-        if not building_comp.can_upgrade(self.resources):
-            return False
-
-        for resource_str, cost in building_comp.upgrade_cost.items():
-            self.resources[Resources(resource_str)] -= cost
-
-        building_comp.level += 1
-
-        return True
 
 
 @dataclass

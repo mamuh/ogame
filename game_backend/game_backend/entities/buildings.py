@@ -147,6 +147,22 @@ def ShipYard() -> Building:
     )
 
 
+def ResearchLab() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="ResearchLab",
+                base_cost={
+                    Resources.Metal: 50,
+                    Resources.Cristal: 100,
+                    Resources.Deuterium: 50,
+                },
+                upgrade_cost_factor=1.5,
+            )
+        }
+    )
+
+
 def MissileTurret() -> Building:
     return Building(
         components={
@@ -170,5 +186,6 @@ def Buildings() -> Dict[str, Building]:
         "cristal_hangar": CristalHangar(),
         "deuterium_tank": DeuteriumTank(),
         "ship_yard": ShipYard(),
+        "research_lab": ResearchLab(),
         "missile_turret": MissileTurret(),
     }

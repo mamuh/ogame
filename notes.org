@@ -4,7 +4,8 @@
 ** todos
 *** DONE Build fleet movement system
 CLOSED: [2020-09-07 Mon 22:16]
-*** TODO Build combat system
+*** DONE Build combat system
+CLOSED: [2020-09-09 Wed 22:30]
 *** TODO Add research and requirements
 
 * Sunday 2020-09-06
@@ -28,4 +29,12 @@ when sending a mission, the player should be able to select which ships will go
 * Tuesday 2020-09-08
 ** todos
 *** TODO combat report and mission report in general need to be returned
-*** TODO take into account fleet cargo capacity
+*** DONE take into account fleet cargo capacity
+CLOSED: [2020-09-09 Wed 22:30]
+
+
+* Wednesday 2020-09-09
+** todos
+*** TODO Research and requirements
+*** TODO Set up realistic values for production, cost, etc
+*** TODO building time?

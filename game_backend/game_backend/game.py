@@ -16,6 +16,7 @@ from game_backend.systems.mission_system import (
     MissionException,
     VALID_MISSIONS,
 )
+from game_backend.systems.upgrade_system import UpgradeSystem
 from game_backend.entities.entities import GameState, Player, Planet
 from game_backend.entities.ships import Fleet
 from game_backend.resources import Resources
@@ -78,11 +79,7 @@ class Game(Thread):
         self, player_id: str, planet_id: PlanetLocation, building_id: str
     ) -> bool:
         self.check_player_planet(player_id, planet_id)
-        return (
-            self.game_state.world.planets[planet_id]
-            .components[PlanetComponent]
-            .upgrade_building(building_id)
-        )
+        return UpgradeSystem.upgrade_building(player_id, planet_id, building_id)
 
     def action_build_ship(
         self, player_id: str, planet_id: PlanetLocation, ship_id: str

@@ -8,6 +8,7 @@ from game_backend.components import (
 )
 from game_backend.resources import Resources
 from game_backend.entities.buildings import Building, Buildings
+from game_backend.entities.research import Research
 from game_backend.entities.ships import Fleet
 from game_backend.game_structs import PlanetLocation
 
@@ -47,6 +48,7 @@ class World(Entity):
 @dataclass
 class Player(Entity):
     fleets: List[Fleet] = field(default_factory=list)
+    research: Dict[str, Entity] = field(default_factory=Research)
 
     @classmethod
     def new(cls, id: str, name: str):
