@@ -81,6 +81,12 @@ class Game(Thread):
         self.check_player_planet(player_id, planet_id)
         return UpgradeSystem.upgrade_building(player_id, planet_id, building_id)
 
+    def action_upgrade_research(
+        self, player_id: str, planet_id: PlanetLocation, research_id: str
+    ) -> bool:
+        self.check_player_planet(player_id, planet_id)
+        return UpgradeSystem.upgrade_research(player_id, planet_id, research_id)
+
     def action_build_ship(
         self, player_id: str, planet_id: PlanetLocation, ship_id: str
     ) -> ActionOutcome:

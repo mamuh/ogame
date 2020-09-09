@@ -141,6 +141,35 @@ def test_upgrade_building():
         assert "unknown player" in str(excinfo.value).lower()
 
 
+def test_upgrade_research():
+    game_state = initialise_gamestate()
+    game = Game(game_state)
+
+    game.update(1000)
+    earth = PlanetLocation(1, 1, 3)
+
+    upgrade_success = game.action_upgrade_research("max", earth, "energy")
+    assert not upgrade_success
+
+    upgrade_success = game.action_upgrade_building("max", earth, "research_lab")
+    assert upgrade_success
+
+    upgrade_success = game.action_upgrade_research("max", earth, "laser")
+    assert not upgrade_success
+
+    upgrade_success = game.action_upgrade_research("max", earth, "energy")
+    assert upgrade_success
+
+    upgrade_success = game.action_upgrade_research("max", earth, "laser")
+    assert not upgrade_success
+
+    upgrade_success = game.action_upgrade_building("max", earth, "research_lab")
+    upgrade_sucess = game.action_upgrade_research("max", earth, "energy")
+
+    upgrade_sucess = game.action_upgrade_research("max", earth, "laser")
+    assert upgrade_success
+
+
 def test_create_new_player():
     game_state = initialise_empty_universe()
 

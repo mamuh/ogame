@@ -43,6 +43,13 @@ class ResearchComponent(Component, JsonSchemaMixin):
     cost: Dict[Resources, float]
     upgrade_cost_factor: float
 
+    @property
+    def upgrade_cost(self) -> Dict[str, float]:
+        return {
+            resource.value: resource_base_cost * self.upgrade_cost_factor ** self.level
+            for resource, resource_base_cost in self.cost.items()
+        }
+
 
 @dataclass
 class RequirementsComponent(Component, JsonSchemaMixin):
