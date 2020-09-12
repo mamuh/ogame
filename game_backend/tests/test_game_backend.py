@@ -356,7 +356,7 @@ def test_combat():
         Resources.Deuterium: 0,
     }
     assert len(game_state.players["bob"].fleets) == 0
-    assert attacking_fleet.ships[0].components[ShipComponent].number == 4
+    assert attacking_fleet.ships[0].components[ShipComponent].number == 5
     assert attacking_fleet.components[FleetComponent].cargo == {
         Resources.Metal: 100,
         Resources.Cristal: 50,

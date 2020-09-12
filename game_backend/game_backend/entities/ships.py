@@ -7,6 +7,7 @@ from game_backend.components import (
     ShipComponent,
     CombatComponent,
     FleetComponent,
+    RequirementsComponent,
 )
 from game_backend.resources import Resources
 from game_backend.game_structs import PlanetLocation
@@ -28,6 +29,9 @@ def LightFighter() -> Ship:
                 cargo=100,
             ),
             CombatComponent: CombatComponent(hp=100, shield=20, damage=20),
+            RequirementsComponent: RequirementsComponent(
+                building={"ship_yard": 1}, research={"combustion_drive"}
+            ),
         }
     )
 
@@ -43,6 +47,10 @@ def HeavyFighter() -> Ship:
                 cargo=150,
             ),
             CombatComponent: CombatComponent(hp=250, shield=40, damage=50,),
+            RequirementsComponent: RequirementsComponent(
+                building={"ship_yard": 3},
+                research={"armour_tech": 2, "impulse_drive": 2},
+            ),
         }
     )
 

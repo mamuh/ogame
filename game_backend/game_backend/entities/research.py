@@ -42,5 +42,63 @@ def LaserResearch() -> Entity:
     )
 
 
+def CombustionDrive() -> Entity:
+    return Entity(
+        components={
+            ResearchComponent: ResearchComponent(
+                name="Combustion Drive",
+                level=0,
+                cost={Resources.Metal: 400, Resources.Deuterium: 600},
+                upgrade_cost_factor=2.0,
+            ),
+            RequirementsComponent: RequirementsComponent(
+                building={"research_lab": 1}, research={"energy": 1}
+            ),
+        }
+    )
+
+
+def ImpulseDrive() -> Entity:
+    return Entity(
+        components={
+            ResearchComponent: ResearchComponent(
+                name="Impulse Drive",
+                level=0,
+                cost={
+                    Resources.Metal: 2000,
+                    Resources.Cristal: 4000,
+                    Resources.Deuterium: 600,
+                },
+                upgrade_cost_factor=2.0,
+            ),
+            RequirementsComponent: RequirementsComponent(
+                building={"research_lab": 2}, research={"energy": 1}
+            ),
+        }
+    )
+
+
+def ArmourTech() -> Entity:
+    return Entity(
+        components={
+            ResearchComponent: ResearchComponent(
+                name="Armour Technology",
+                level=0,
+                cost={Resources.Metal: 1000},
+                upgrade_cost_factor=2.0,
+            ),
+            RequirementsComponent: RequirementsComponent(
+                building={"research_lab": 2}, research={}
+            ),
+        }
+    )
+
+
 def Research() -> Dict[str, Entity]:
-    return {"energy": EnergyResearch(), "laser": LaserResearch()}
+    return {
+        "energy": EnergyResearch(),
+        "laser": LaserResearch(),
+        "combustion_drive": CombustionDrive(),
+        "impulse_drive": ImpulseDrive(),
+        "armour_tech": ArmourTech(),
+    }
