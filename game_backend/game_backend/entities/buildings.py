@@ -8,6 +8,7 @@ from game_backend.components import (
     ProducerComponent,
     StorageComponent,
     CombatComponent,
+    RequirementsComponent,
 )
 from game_backend.resources import Resources
 
@@ -168,10 +169,45 @@ def MissileTurret() -> Building:
         components={
             BuildingComponent: BuildingComponent(
                 name="MissileTurret",
-                base_cost={Resources.Metal: 50},
+                base_cost={Resources.Metal: 2000},
                 upgrade_cost_factor=1.0,
             ),
-            CombatComponent: CombatComponent(hp=100, shield=30, damage=30,),
+            CombatComponent: CombatComponent(hp=3800, shield=34, damage=152,),
+            RequirementsComponent: RequirementsComponent(
+                building={"ship_yard": 1}, research={}
+            ),
+        }
+    )
+
+
+def LaserTurret() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="LaserTurret",
+                base_cost={Resources.Metal: 1500, Resources.Cristal: 500},
+                upgrade_cost_factor=1.0,
+            ),
+            CombatComponent: CombatComponent(hp=3800, shield=42, damage=190),
+            RequirementsComponent: RequirementsComponent(
+                building={"ship_yard": 2}, research={"laser": 3}
+            ),
+        }
+    )
+
+
+def HeavyLaser() -> Building:
+    return Building(
+        components={
+            BuildingComponent: BuildingComponent(
+                name="HeavyLaser",
+                base_cost={Resources.Metal: 6000, Resources.Cristal: 2000},
+                upgrade_cost_factor=1.0,
+            ),
+            CombatComponent: CombatComponent(hp=15200, shield=170, damage=475),
+            RequirementsComponent: RequirementsComponent(
+                building={"ship_yard": 4}, research={"energy": 3, "laser": 6}
+            ),
         }
     )
 
@@ -188,4 +224,6 @@ def Buildings() -> Dict[str, Building]:
         "ship_yard": ShipYard(),
         "research_lab": ResearchLab(),
         "missile_turret": MissileTurret(),
+        "laser_turret": LaserTurret(),
+        "heavy_laser": HeavyLaser(),
     }

@@ -35,6 +35,19 @@ CLOSED: [2020-09-09 Wed 22:30]
 
 * Wednesday 2020-09-09
 ** todos
-*** TODO Research and requirements
+*** DONE Research and requirements
+CLOSED: [2020-09-10 Thu 20:10]
 *** TODO Set up realistic values for production, cost, etc
 *** TODO building time?
+
+* Thursday 2020-09-10
+** todos
+*** TODO populate requirements
+
+
+* Saturday 2020-09-12
+** todos
+*** TODO Messages system
+so the player knows when he has been attacked etc
+*** TODO Descriptive errors and checks
+so the player knows why he cannot do a specific action (for example building something when he doesnt have the resources or the tech)
