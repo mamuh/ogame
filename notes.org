@@ -6,7 +6,8 @@
 CLOSED: [2020-09-07 Mon 22:16]
 *** DONE Build combat system
 CLOSED: [2020-09-09 Wed 22:30]
-*** TODO Add research and requirements
+*** DONE Add research and requirements
+CLOSED: [2020-09-13 Sun 16:43]
 
 * Sunday 2020-09-06
 ** todos
@@ -37,7 +38,8 @@ CLOSED: [2020-09-09 Wed 22:30]
 ** todos
 *** DONE Research and requirements
 CLOSED: [2020-09-10 Thu 20:10]
-*** TODO Set up realistic values for production, cost, etc
+*** DONE Set up realistic values for production, cost, etc
+CLOSED: [2020-09-13 Sun 16:43]
 *** TODO building time?
 
 * Thursday 2020-09-10
