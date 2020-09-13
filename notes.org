@@ -56,5 +56,6 @@ so the player knows why he cannot do a specific action (for example building som
 
 * Sunday 2020-09-13
 ** todos
-*** TODO universe speed should not be a global variable
+*** DONE universe speed should not be a global variable
+CLOSED: [2020-09-13 Sun 17:19]
 it could be an attribute of the "world" entity?
