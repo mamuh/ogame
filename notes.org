@@ -59,3 +59,4 @@ so the player knows why he cannot do a specific action (for example building som
 *** DONE universe speed should not be a global variable
 CLOSED: [2020-09-13 Sun 17:19]
 it could be an attribute of the "world" entity?
+*** TODO Game saving/backup system

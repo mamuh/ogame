@@ -4,7 +4,11 @@ import json
 from flask import Flask, request
 
 from game_backend.game import Game
-from game_backend.init_game import initialise_gamestate, init_state_complex
+from game_backend.init_game import (
+    initialise_gamestate,
+    init_state_complex,
+    init_fast_empty,
+)
 from game_backend.resources import Resources
 from game_backend.game_structs import PlanetLocation
 
@@ -119,7 +123,7 @@ def send_mission(player_id: str, planet_id: str, mission: str):
 
 
 if __name__ == "__main__":
-    game_state = init_state_complex()
+    game_state = init_fast_empty()
     game_thread = Game(game_state)
 
     game_thread.start()

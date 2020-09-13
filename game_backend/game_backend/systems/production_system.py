@@ -26,11 +26,16 @@ class ProductionSystem:
             planet_storage = planet_comp._resources_storage
 
             for resource, resource_prod_per_sec in production_per_second.items():
-                if planet_comp.resources[resource] >= planet_storage[resource]:
+                capacity_left = (
+                    planet_storage[resource] - planet_comp.resources[resource]
+                )
+                if capacity_left <= 0:
 
                     # The planet is at or above capacity for this resource, it stops accumulating
                     continue
-                planet_comp.resources[resource] += resource_prod_per_sec * dt
+                planet_comp.resources[resource] += min(
+                    resource_prod_per_sec * dt, capacity_left
+                )
 
     def update_planet_production(self, universe_speed: float, planet: Planet):
         planet_component = planet.components[PlanetComponent]

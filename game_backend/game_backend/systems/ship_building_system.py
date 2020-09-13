@@ -11,6 +11,7 @@ from game_backend.components import (
     ShipComponent,
     FleetComponent,
 )
+from game_backend.systems.upgrade_system import UpgradeSystem
 from game_backend.game_structs import PlanetLocation
 
 
@@ -40,6 +41,9 @@ class ShipBuildingSystem:
 
         assert hasattr(planet_fleet, ship_id), f"Invalid ship id: {ship_id}"
         ship = getattr(planet_fleet, ship_id)
+
+        if not UpgradeSystem.check_requirements_met(player, planet, ship):
+            return False
 
         planet_component = planet.components[PlanetComponent]
         ship_cost = ship.components[ShipComponent].cost

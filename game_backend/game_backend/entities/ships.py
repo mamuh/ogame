@@ -66,6 +66,9 @@ def ColonyShip() -> Ship:
                 cargo=500,
             ),
             CombatComponent: CombatComponent(hp=500, shield=50, damage=10),
+            RequirementsComponent: RequirementsComponent(
+                building={"shipyard": 4}, research={"impulse_drive": 4}
+            ),
         }
     )
 

@@ -35,6 +35,11 @@ def initialise_empty_universe() -> GameState:
     return game_state
 
 
+def init_fast_empty() -> GameState:
+    game_state = GameState(world=World(planets={}, speed=1000), players={},)
+    return game_state
+
+
 def init_state_complex() -> GameState:
     game_state = GameState(
         world=World(

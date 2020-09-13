@@ -80,8 +80,11 @@ def display_game_state(player_data, player_id: str):
         print(planet_comp["name"])
         resources_string = []
         for res in planet_comp["resources"]:
+            amount = planet_comp["resources"][res]
+            amount_max = planet_comp["_resources_storage"][res]
+            prod_per_sec = planet_comp["_production_per_second"][res]
             resources_string.append(
-                f"{res}: {int(planet_comp['resources'][res])}/{int(planet_comp['resources_storage'][res])}"
+                f"{res}: {int(amount)}/{int(amount_max)} (+{int(prod_per_sec*60)}/min)"
             )
         print("Resources:", " - ".join(resources_string))
         print(

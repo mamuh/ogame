@@ -194,19 +194,28 @@ def test_create_new_player():
 def test_build_ship():
     game_state = initialise_gamestate()
     game = Game(game_state)
+    game_state.world.speed = 1000000
+    earth = PlanetLocation(1, 1, 3)
 
-    outcome = game.action_build_ship("max", PlanetLocation(1, 1, 3), "light_fighter")
+    outcome = game.action_build_ship("max", earth, "light_fighter")
 
     assert not outcome.success
 
     game.update(24 * 3600)
 
-    success = game.action_upgrade_building("max", PlanetLocation(1, 1, 3), "shipyard")
+    success = game.action_upgrade_building("max", earth, "shipyard")
 
     assert success
 
-    outcome = game.action_build_ship("max", PlanetLocation(1, 1, 3), "light_fighter")
+    outcome = game.action_build_ship("max", earth, "light_fighter")
 
+    assert not outcome.success
+
+    assert game.action_upgrade_building("max", earth, "research_lab")
+    assert game.action_upgrade_research("max", earth, "energy")
+    assert game.action_upgrade_research("max", earth, "combustion_drive")
+
+    outcome = game.action_build_ship("max", earth, "light_fighter")
     assert outcome.success
 
     assert len(game_state.players["max"].fleets) == 1
@@ -365,3 +374,14 @@ def test_combat():
     assert attacking_fleet.components[FleetComponent].cargo[Resources.Cristal] > 0
     assert attacking_fleet.components[FleetComponent].cargo[Resources.Deuterium] > 0
     game.update(20)
+
+
+def test_universe_speed():
+    game_state = initialise_gamestate()
+    game = Game(game_state)
+    game_state.world.speed = 10000000
+    earth = game_state.world.planets[PlanetLocation(1, 1, 3)]
+
+    game.update(1)
+
+    assert earth.components[PlanetComponent].resources[Resources.Metal] == 10000
