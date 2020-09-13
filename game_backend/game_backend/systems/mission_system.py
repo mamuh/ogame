@@ -20,7 +20,6 @@ from game_backend.resources import (
     RESOURCES_PRIORITY,
 )
 from game_backend.game_structs import PlanetLocation
-from game_backend.config import SPEED
 
 
 VALID_MISSIONS = ["TRANSPORT", "RETURN", "COLONIZE", "ATTACK"]
@@ -226,7 +225,10 @@ class MissionSystem:
         total_distance = fleet_comp.travelling_from.distance_from(
             fleet_comp.travelling_to
         )
-        travelling_time = 10 + 35 * math.sqrt(10 * total_distance / fleet_speed) / SPEED
+        travelling_time = (
+            10
+            + 35 * math.sqrt(10 * total_distance / fleet_speed) / game_state.world.speed
+        )
 
         return travelling_time
 

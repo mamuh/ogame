@@ -42,6 +42,7 @@ class Planet(Entity):
 
 @dataclass
 class World(Entity):
+    speed: int = 100
     planets: Dict[str, Planet] = field(default_factory=dict)
 
 

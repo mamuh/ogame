@@ -53,3 +53,8 @@ CLOSED: [2020-09-13 Sun 16:43]
 so the player knows when he has been attacked etc
 *** TODO Descriptive errors and checks
 so the player knows why he cannot do a specific action (for example building something when he doesnt have the resources or the tech)
+
+* Sunday 2020-09-13
+** todos
+*** TODO universe speed should not be a global variable
+it could be an attribute of the "world" entity?

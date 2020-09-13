@@ -23,7 +23,6 @@ from game_backend.systems.position_system import PositionSystem
 from game_backend.systems.mission_system import MissionSystem
 
 from game_backend.game_structs import PlanetLocation
-from game_backend.config import SPEED
 
 
 @pytest.fixture(autouse=True, scope="function")
@@ -87,7 +86,10 @@ def test_game_update():
 
     game.update(3600)
 
-    assert earth.components[PlanetComponent].resources[Resources.Metal] == 30 * SPEED
+    assert (
+        earth.components[PlanetComponent].resources[Resources.Metal]
+        == 30 * game_state.world.speed
+    )
 
     earth.buildings["metal_mine"].components[BuildingComponent].level += 1
     earth.buildings["solar_plant"].components[BuildingComponent].level += 1
@@ -96,7 +98,10 @@ def test_game_update():
 
     game.update(3600)
 
-    assert earth.components[PlanetComponent].resources[Resources.Metal] > 60 * SPEED
+    assert (
+        earth.components[PlanetComponent].resources[Resources.Metal]
+        > 60 * game_state.world.speed
+    )
 
 
 def test_upgrade_building():
@@ -120,8 +125,10 @@ def test_upgrade_building():
     ]
 
     assert upgrade_success
-    assert planet_component.resources[Resources.Metal] < 30 * SPEED
-    assert int(planet_component.resources[Resources.Cristal]) < 20 * SPEED
+    assert planet_component.resources[Resources.Metal] < 30 * game_state.world.speed
+    assert (
+        int(planet_component.resources[Resources.Cristal]) < 20 * game_state.world.speed
+    )
 
     with pytest.raises(AssertionError) as excinfo:
         game.action_upgrade_building("max", "ploup", "metal_mine")
@@ -251,7 +258,7 @@ def test_fleet_transport_from_game():
         game_state.world.planets[earth]
         .components[PlanetComponent]
         .resources[Resources.Metal]
-        == 30 * SPEED
+        == 30 * game_state.world.speed
     )
 
     game.action_send_mission(
@@ -266,7 +273,7 @@ def test_fleet_transport_from_game():
         game_state.world.planets[earth]
         .components[PlanetComponent]
         .resources[Resources.Metal]
-        == 30 * SPEED - 2
+        == 30 * game_state.world.speed - 2
     )
     game.update(5)
 

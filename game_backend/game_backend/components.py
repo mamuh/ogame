@@ -7,7 +7,6 @@ from dataclasses_jsonschema import JsonSchemaMixin
 from game_backend.ecs.component import Component
 from game_backend.resources import Resources, empty_resources, add_resources
 from game_backend.game_structs import PlanetLocation
-from game_backend.config import SPEED
 
 
 @dataclass
@@ -106,6 +105,10 @@ class PlanetComponent(Component, JsonSchemaMixin):
     resources: Dict[Resources, float] = field(
         default_factory=lambda: {resource: 0.0 for resource in Resources}
     )
+    _production_per_second: Dict[Resources, float] = field(
+        default_factory=empty_resources
+    )
+    _resources_storage: Dict[Resources, float] = field(default_factory=empty_resources)
 
     @property
     def energy_production(self) -> float:
@@ -143,39 +146,6 @@ class PlanetComponent(Component, JsonSchemaMixin):
         if energy_consumption == 0:
             return 1
         return min(1, self.energy_production / energy_consumption)
-
-    @property
-    def production_per_second(self) -> Dict[str, float]:
-        produced_resources = {res.value: 0 for res in Resources}
-        planet = self.entity
-        for building in planet.buildings.values():
-            if ProducerComponent in building.components:
-                prod_comp = building.components[ProducerComponent]
-                building_comp = building.components[BuildingComponent]
-                for resource, rate in prod_comp.production_rate.items():
-                    produced_resources[resource.value] += rate * SPEED + (
-                        rate
-                        * SPEED
-                        * building_comp.level
-                        * self.energy_ratio
-                        * building_comp.upgrade_prod_factor ** building_comp.level
-                    )
-        return produced_resources
-
-    @property
-    def resources_storage(self) -> Dict[str, float]:
-        resources_storage_dict = {res.value: 0 for res in Resources}
-        planet = self.entity
-        for building in planet.buildings.values():
-            if StorageComponent in building.components:
-                stor_comp = building.components[StorageComponent]
-                building_comp = building.components[BuildingComponent]
-                for resource, storage in stor_comp.resources_storage.items():
-                    resources_storage_dict[resource.value] += (
-                        storage
-                        * stor_comp.upgrade_storage_factor ** building_comp.level
-                    )
-        return resources_storage_dict
 
 
 @dataclass
