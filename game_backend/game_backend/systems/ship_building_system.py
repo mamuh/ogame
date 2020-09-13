@@ -21,7 +21,7 @@ class ShipBuildingSystem:
         player = game_state.players[player_id]
         planet = game_state.world.planets[planet_id]
 
-        if planet.buildings["ship_yard"].components[BuildingComponent].level == 0:
+        if planet.buildings["shipyard"].components[BuildingComponent].level == 0:
             return False
 
         # Finding the appropriate fleet

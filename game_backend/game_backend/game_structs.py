@@ -19,8 +19,9 @@ class PlanetLocation(str):
         return PlanetLocation(int(galaxy), int(system), int(position))
 
     def distance_from(self, other: "PlanetLocation"):
-        return (
-            abs(self.galaxy - other.galaxy) * 10000
-            + abs(self.system - other.system) * 1000
-            + abs(self.position - other.position) * 100
-        )
+        if self.galaxy != other.galaxy:
+            return 20000 * abs(self.galaxy - other.galaxy)
+        elif self.system != other.system:
+            return 2700 + 95 * abs(self.system - other.system)
+        else:
+            return 1000 + 5 * abs(self.position - other.position)

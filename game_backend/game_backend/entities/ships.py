@@ -24,13 +24,13 @@ def LightFighter() -> Ship:
             ShipComponent: ShipComponent(
                 name="LightFighter",
                 number=0,
-                cost={Resources.Metal: 30, Resources.Cristal: 10,},
-                speed=10,
-                cargo=100,
+                cost={Resources.Metal: 3000, Resources.Cristal: 1000,},
+                speed=12500,
+                cargo=50,
             ),
-            CombatComponent: CombatComponent(hp=100, shield=20, damage=20),
+            CombatComponent: CombatComponent(hp=4000, shield=10, damage=50),
             RequirementsComponent: RequirementsComponent(
-                building={"ship_yard": 1}, research={"combustion_drive"}
+                building={"shipyard": 1}, research={"combustion_drive": 1}
             ),
         }
     )
@@ -42,13 +42,13 @@ def HeavyFighter() -> Ship:
             ShipComponent: ShipComponent(
                 name="HeavyFighter",
                 number=0,
-                cost={Resources.Metal: 100, Resources.Cristal: 30},
-                speed=10,
-                cargo=150,
+                cost={Resources.Metal: 6000, Resources.Cristal: 4000},
+                speed=10000,
+                cargo=100,
             ),
-            CombatComponent: CombatComponent(hp=250, shield=40, damage=50,),
+            CombatComponent: CombatComponent(hp=10000, shield=25, damage=150,),
             RequirementsComponent: RequirementsComponent(
-                building={"ship_yard": 3},
+                building={"shipyard": 3},
                 research={"armour_tech": 2, "impulse_drive": 2},
             ),
         }

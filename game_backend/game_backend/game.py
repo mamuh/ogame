@@ -138,6 +138,11 @@ class Game(Thread):
             location=free_location,
             owner_id=player_id,
         )
+        new_planet.components[PlanetComponent].resources = {
+            Resources.Metal: 500,
+            Resources.Cristal: 500,
+            Resources.Deuterium: 0,
+        }
         self.game_state.world.planets[free_location] = new_planet
         self.game_state.players[player_id] = Player.new(id=player_id, name=player_name)
         return True

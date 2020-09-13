@@ -1,4 +1,5 @@
 from typing import List, Dict
+import math
 
 from game_backend.ecs.entity import EntityCatalog
 from game_backend.entities.entities import GameState, Planet
@@ -19,6 +20,7 @@ from game_backend.resources import (
     RESOURCES_PRIORITY,
 )
 from game_backend.game_structs import PlanetLocation
+from game_backend.config import SPEED
 
 
 VALID_MISSIONS = ["TRANSPORT", "RETURN", "COLONIZE", "ATTACK"]
@@ -224,7 +226,7 @@ class MissionSystem:
         total_distance = fleet_comp.travelling_from.distance_from(
             fleet_comp.travelling_to
         )
-        travelling_time = total_distance / fleet_speed
+        travelling_time = 10 + 35 * math.sqrt(10 * total_distance / fleet_speed) / SPEED
 
         return travelling_time
 

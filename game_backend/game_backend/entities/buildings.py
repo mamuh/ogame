@@ -33,12 +33,12 @@ def MetalMine() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
-                production_rate={Resources.Metal: 1}, energy_consumption=5
+                production_rate={Resources.Metal: 30 / 3600}, energy_consumption=10
             ),
             BuildingComponent: BuildingComponent(
-                name="MetalMine",
-                base_cost={Resources.Metal: 10},
-                upgrade_cost_factor=1.1,
+                name="Metal Mine",
+                base_cost={Resources.Metal: 60, Resources.Cristal: 15},
+                upgrade_cost_factor=1.5,
                 upgrade_prod_factor=1.1,
             ),
         }
@@ -49,12 +49,12 @@ def CristalMine() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
-                production_rate={Resources.Cristal: 0.5}, energy_consumption=6
+                production_rate={Resources.Cristal: 20 / 3600}, energy_consumption=10
             ),
             BuildingComponent: BuildingComponent(
-                name="CristalMine",
-                base_cost={Resources.Metal: 20},
-                upgrade_cost_factor=1.2,
+                name="Cristal Mine",
+                base_cost={Resources.Metal: 48, Resources.Cristal: 24},
+                upgrade_cost_factor=1.6,
                 upgrade_prod_factor=1.1,
             ),
         }
@@ -65,12 +65,12 @@ def DeuteriumSynthesizer() -> Building:
     return Building(
         components={
             ProducerComponent: ProducerComponent(
-                production_rate={Resources.Deuterium: 1}, energy_consumption=7
+                production_rate={Resources.Deuterium: 10 / 3600}, energy_consumption=20
             ),
             BuildingComponent: BuildingComponent(
-                name="DeuteriumSynthesizer",
-                base_cost={Resources.Metal: 20, Resources.Cristal: 20},
-                upgrade_cost_factor=1.3,
+                name="Deuterium Synthesizer",
+                base_cost={Resources.Metal: 225, Resources.Cristal: 75},
+                upgrade_cost_factor=1.5,
                 upgrade_prod_factor=1.1,
             ),
         }
@@ -84,9 +84,9 @@ def SolarPlant() -> Building:
                 production_rate={}, energy_consumption=0, energy_production=20
             ),
             BuildingComponent: BuildingComponent(
-                name="SolarPlant",
-                base_cost={Resources.Metal: 10},
-                upgrade_cost_factor=1.1,
+                name="Solar Plant",
+                base_cost={Resources.Metal: 75, Resources.Cristal: 30},
+                upgrade_cost_factor=1.5,
                 upgrade_prod_factor=1.1,
             ),
         }
@@ -97,11 +97,13 @@ def MetalHangar() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="MetalHangar",
-                base_cost={Resources.Metal: 5},
-                upgrade_cost_factor=1.2,
+                name="Metal Hangar",
+                base_cost={Resources.Metal: 1000},
+                upgrade_cost_factor=2.0,
             ),
-            StorageComponent: StorageComponent(resources_storage={Resources.Metal: 30}),
+            StorageComponent: StorageComponent(
+                resources_storage={Resources.Metal: 10000}
+            ),
         }
     )
 
@@ -110,12 +112,12 @@ def CristalHangar() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="CristalHangar",
-                base_cost={Resources.Metal: 8},
-                upgrade_cost_factor=1.3,
+                name="Cristal Hangar",
+                base_cost={Resources.Metal: 500, Resources.Cristal: 250},
+                upgrade_cost_factor=2.0,
             ),
             StorageComponent: StorageComponent(
-                resources_storage={Resources.Cristal: 2}
+                resources_storage={Resources.Cristal: 10000}
             ),
         }
     )
@@ -125,24 +127,28 @@ def DeuteriumTank() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="DeuteriumTank",
-                base_cost={Resources.Metal: 8, Resources.Cristal: 10},
-                upgrade_cost_factor=1.3,
+                name="Deuterium Tank",
+                base_cost={Resources.Metal: 1000, Resources.Cristal: 1000},
+                upgrade_cost_factor=2,
             ),
             StorageComponent: StorageComponent(
-                resources_storage={Resources.Deuterium: 2}
+                resources_storage={Resources.Deuterium: 10000}
             ),
         }
     )
 
 
-def ShipYard() -> Building:
+def Shipyard() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="ShipYard",
-                base_cost={Resources.Metal: 20},
-                upgrade_cost_factor=1.3,
+                name="Shipyard",
+                base_cost={
+                    Resources.Metal: 400,
+                    Resources.Cristal: 200,
+                    Resources.Deuterium: 100,
+                },
+                upgrade_cost_factor=2.0,
             ),
         }
     )
@@ -152,13 +158,13 @@ def ResearchLab() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="ResearchLab",
+                name="Research Lab",
                 base_cost={
-                    Resources.Metal: 50,
-                    Resources.Cristal: 100,
-                    Resources.Deuterium: 50,
+                    Resources.Metal: 200,
+                    Resources.Cristal: 400,
+                    Resources.Deuterium: 200,
                 },
-                upgrade_cost_factor=1.5,
+                upgrade_cost_factor=2.0,
             )
         }
     )
@@ -168,13 +174,13 @@ def MissileTurret() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="MissileTurret",
+                name="Missile Turret",
                 base_cost={Resources.Metal: 2000},
                 upgrade_cost_factor=1.0,
             ),
             CombatComponent: CombatComponent(hp=3800, shield=34, damage=152,),
             RequirementsComponent: RequirementsComponent(
-                building={"ship_yard": 1}, research={}
+                building={"shipyard": 1}, research={}
             ),
         }
     )
@@ -184,13 +190,13 @@ def LaserTurret() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="LaserTurret",
+                name="Laser Turret",
                 base_cost={Resources.Metal: 1500, Resources.Cristal: 500},
                 upgrade_cost_factor=1.0,
             ),
             CombatComponent: CombatComponent(hp=3800, shield=42, damage=190),
             RequirementsComponent: RequirementsComponent(
-                building={"ship_yard": 2}, research={"laser": 3}
+                building={"shipyard": 2}, research={"laser": 3}
             ),
         }
     )
@@ -200,13 +206,13 @@ def HeavyLaser() -> Building:
     return Building(
         components={
             BuildingComponent: BuildingComponent(
-                name="HeavyLaser",
+                name="Heavy Laser",
                 base_cost={Resources.Metal: 6000, Resources.Cristal: 2000},
                 upgrade_cost_factor=1.0,
             ),
             CombatComponent: CombatComponent(hp=15200, shield=170, damage=475),
             RequirementsComponent: RequirementsComponent(
-                building={"ship_yard": 4}, research={"energy": 3, "laser": 6}
+                building={"shipyard": 4}, research={"energy": 3, "laser": 6}
             ),
         }
     )
@@ -221,7 +227,7 @@ def Buildings() -> Dict[str, Building]:
         "metal_hangar": MetalHangar(),
         "cristal_hangar": CristalHangar(),
         "deuterium_tank": DeuteriumTank(),
-        "ship_yard": ShipYard(),
+        "shipyard": Shipyard(),
         "research_lab": ResearchLab(),
         "missile_turret": MissileTurret(),
         "laser_turret": LaserTurret(),

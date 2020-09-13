@@ -74,7 +74,7 @@ def init_state_complex() -> GameState:
     game_state.players["max"].fleets = [earth_fleet, mars_fleet]
 
     jupiter_fleet = Fleet.new("bob", PlanetLocation(1, 1, 5))
-    jupiter_fleet.heavy_fighter.components[ShipComponent].number = 3
+    jupiter_fleet.heavy_fighter.components[ShipComponent].number = 5
 
     game_state.players["bob"].fleets = [jupiter_fleet]
 

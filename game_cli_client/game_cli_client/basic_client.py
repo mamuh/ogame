@@ -84,6 +84,9 @@ def display_game_state(player_data, player_id: str):
                 f"{res}: {int(planet_comp['resources'][res])}/{int(planet_comp['resources_storage'][res])}"
             )
         print("Resources:", " - ".join(resources_string))
+        print(
+            f"Energy: {int(planet_comp['energy_production'] - planet_comp['energy_consumption'])}"
+        )
 
         print("Buildings")
         for building_id, building in planet["buildings"].items():

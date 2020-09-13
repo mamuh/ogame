@@ -77,7 +77,7 @@ class CombatSystem:
                 )
             )
 
-            print(attacker_total_damage)
+            # print(attacker_total_damage)
 
             defender_total_hp = sum(
                 combat_component.hp * number
